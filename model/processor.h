@@ -10,6 +10,9 @@ typedef struct Processor{
     Control *control;
     AluControl *aluControl;
     Alu *alu;
-    Register *programCounter;
 } Processor;
+
+void initializeProcessor(Processor *processor);
+
+void tearDownProcessor(Processor *processor);
 #endif //RISC_V_SIM_PROCESSOR_H
