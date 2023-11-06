@@ -3,12 +3,15 @@
 #include "simulator.h"
 
 void initialize(Simulator *simulator, int memorySize) {
-    simulator->memory = malloc(sizeof(int) * memorySize);
+    simulator->memory = malloc(sizeof(Memory));
+    simulator->memory->startAddress = malloc(sizeof(int) * memorySize);
+    simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
     initializeProcessor(simulator->processor);
 }
 
 void tearDown(Simulator *simulator) {
+    free(simulator->memory->startAddress);
     free(simulator->memory);
     tearDownProcessor(simulator->processor);
     free(simulator->processor);
@@ -16,14 +19,14 @@ void tearDown(Simulator *simulator) {
 
 void printRegisters(Simulator *simulator) {
     Register *registers = simulator->processor->registers;
-    char *registerNames[] = {"zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-                             "s0/fp", "s1", "a0", "a1", "a2", "a3", "a4",
-                             "a5", "a6", "a7", "s2", "s3", "s4", "s5", "s6",
-                             "s7", "s8", "s9", "s10", "s11", "t3", "t4", "t5",
-                             "t6"};
-    printf("Register\tName\tDecimal\t\tHexadecimal\n");
+    char *registerNames[] = {"zero", "ra\t", "sp\t", "gp\t", "tp\t", "t0\t", "t1\t",
+                             "t2\t", "s0/fp", "s1\t", "a0\t", "a1\t", "a2\t", "a3\t",
+                             "a4\t", "a5\t", "a6\t", "a7\t", "s2\t", "s3\t", "s4\t",
+                             "s5\t", "s6\t", "s7\t", "s8\t", "s9\t", "s10\t", "s11\t",
+                             "t3\t", "t4\t", "t5\t", "t6\t"};
+    printf("Register\tName\t\tDecimal\t\tHexadecimal\n");
     for (int i = 0; i < 32; ++i) {
-        printf("x%i\t\t%s\t%i\t\t0x%x\n", i, registerNames[i], (registers + i)->data, (registers + i)->data);
+        printf("x%i\t\t\t%s\t\t%i\t\t\t0x%x\n", i, registerNames[i], (registers + i)->data, (registers + i)->data);
     }
 }
 
