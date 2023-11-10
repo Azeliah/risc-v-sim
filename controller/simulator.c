@@ -17,10 +17,6 @@ void tearDown(Simulator *simulator) {
     free(simulator->processor);
 }
 
-void runTests(Simulator *simulator) {
-
-}
-
 void reset(Simulator *simulator) {
 
 }
@@ -41,7 +37,6 @@ void loadProgram(Simulator *simulator, char *path) {
         ++i;
     }
     *(simulator->memory->startAddress + i - 1) = 0; // Off by one fix
-    printMemoryBytesReversed(simulator->memory);
     fclose(fp);
 }
 

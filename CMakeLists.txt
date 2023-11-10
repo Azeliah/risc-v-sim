@@ -12,4 +12,5 @@ add_executable(risc_v_sim
         model/components/alu.c model/components/alu.h
         model/components/aluControl.c model/components/aluControl.h
         model/components/control.c model/components/control.h
-        utility/outputHelper.c utility/outputHelper.h)
+        utility/outputHelper.c utility/outputHelper.h
+        test/test.c test/test.h)
