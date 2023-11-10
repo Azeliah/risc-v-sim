@@ -7,12 +7,14 @@ int main(int argc, char **argv) {
     initialize(simulator, 0x10000);
 
     int test = 0;
-    if (argc == 2) if (argv[1][0] == 't') test = 1;
+    if (argc == 2) if (**(argv + 1) == 't') test = 1;
 
     if (test) {
         // Run test environment
         int *resultArray = runTestSuite(simulator);
-        printf("%d out of %d tests succeeded.", *(resultArray + 1) - *resultArray, *(resultArray + 1));
+        if (resultArray) {
+            printf("%d out of %d tests succeeded.", *resultArray, *(resultArray + 1));
+        }
         free(resultArray);
     } else {
         /*
@@ -27,8 +29,8 @@ int main(int argc, char **argv) {
          * 4. Tear down memory allocations
          */
         char *fp;
-        if (argc == 2) fp = argv[1];
-        else fp = "..\\test\\task1\\addlarge.bin";
+        if (argc > 2) fp = argv[1];
+        else fp = "../test/task1/addlarge.bin";
 
         loadProgram(simulator, fp);
         printRegisters(simulator->processor->registers);

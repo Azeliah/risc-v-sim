@@ -1,17 +1,23 @@
 #ifndef RISC_V_SIM_TEST_H
 #define RISC_V_SIM_TEST_H
 
+#include <dirent.h>
 #include <string.h>
 
 #include "../controller/simulator.h"
 
+typedef struct List {
+    char *string;
+    struct List *next;
+} List;
+
 int *runTestSuite(Simulator *simulator);
 
-int runTest(Simulator *simulator, char *basePath);
+int runTest(Simulator *simulator, List *basePath);
 
-char **getTestDirectories(int *numTestGroups);
+List *getTestDirectories();
 
-char **getTests(char *directory, int *numTests);
+List *getTests(List *directories);
 
 unsigned int *getExpectedTestResult(char *path);
 

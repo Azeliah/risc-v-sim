@@ -18,7 +18,13 @@ void tearDown(Simulator *simulator) {
 }
 
 void reset(Simulator *simulator) {
+    // Re-allocate memory
+    free(simulator->memory->startAddress);
+    simulator->memory->startAddress = malloc(sizeof(unsigned int) * simulator->memory->size);
 
+    for (int i = 0; i < 32; ++i) {
+        (simulator->processor->registers + i)->data = 0; // Set registers to 0;
+    }
 }
 
 void loadProgram(Simulator *simulator, char *path) {
@@ -41,5 +47,5 @@ void loadProgram(Simulator *simulator, char *path) {
 }
 
 void run(Simulator *simulator) {
-
+    // TODO: Make this.
 }

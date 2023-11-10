@@ -2,32 +2,45 @@
 
 int *runTestSuite(Simulator *simulator) {
     int *resultArray = malloc(sizeof(int) * 2);
+    *resultArray = 0;
+    *(resultArray + 1) = 0;
 
-    int *numTestGroups = malloc(sizeof(int));
-    char **testGroups = getTestDirectories(numTestGroups);
-
-    for (int i = 0; i < *numTestGroups; ++i) {
-        int *numTests = malloc(sizeof(int));
-        char **testBasePaths = getTests(*(testGroups + i), numTests);
-
-        for (int j = 0; j < *numTests; ++j) {
-            resultArray[0] += runTest(simulator, testBasePaths[j]);
-            resultArray[1]++;
+    List *testGroups = getTestDirectories();
+    if (!testGroups->string) return NULL;
+    List *nodeI = testGroups;
+    while (1) {
+        List *testBasePaths = getTests(nodeI);
+        if (!testBasePaths->string) return NULL;
+        List *nodeJ = testBasePaths;
+        while (1) {
+            *resultArray += runTest(simulator, nodeJ);
+            (*(resultArray + 1))++;
+            List *tempJ = nodeJ;
+            nodeJ = nodeJ->next;
+            free(tempJ->string);
+            free(tempJ);
+            if (nodeJ->string == NULL) {
+                free(nodeJ);
+                break;
+            }
         }
-
-        free(numTests);
-        free(testBasePaths);
+        List *tempI = nodeI;
+        nodeI = nodeI->next;
+        free(tempI->string);
+        free(tempI);
+        if (nodeI->string == NULL) {
+            free(nodeI);
+            break;
+        }
     }
-    free(numTestGroups);
-    free(testGroups);
     return resultArray;
 }
 
-int runTest(Simulator *simulator, char *basePath) {
+int runTest(Simulator *simulator, List *basePath) {
     // Create paths
-    char *testProgramPath = strdup(basePath);
+    char *testProgramPath = strdup(basePath->string);
     strcat(testProgramPath, ".bin");
-    char *expectedResultPath = strdup(basePath);
+    char *expectedResultPath = strdup(basePath->string);
     strcat(expectedResultPath, ".res");
 
     // Load program into simulator and run it
@@ -50,12 +63,93 @@ int runTest(Simulator *simulator, char *basePath) {
     return testResult;
 }
 
-char **getTestDirectories(int *numTestGroups) {
-    return (char **) 0;
+List *getTestDirectories() {
+    // TODO: Make a solution that works for both Windows and Linux, if possible.
+    char *testDirectory = "../test";
+    DIR *dir = opendir(testDirectory);
+
+    if (!dir) {
+        printf("No directory stream found at path %s", testDirectory);
+        return NULL;
+    }
+
+    List *testDirectories = malloc(sizeof(List));
+    testDirectories->string = NULL;
+    testDirectories->next = NULL;
+
+    List *current = testDirectories;
+    struct dirent *newDirectory;
+    while ((newDirectory = readdir(dir))) {
+        if (!strcmp(newDirectory->d_name, ".") || !strcmp(newDirectory->d_name, "..")) continue;
+        char *newPath = malloc(strlen(testDirectory) + strlen(newDirectory->d_name) + 2);
+        sprintf(newPath, "%s/%s", testDirectory, newDirectory->d_name);
+        int isDirectory = 1;
+        for (int i = (int) strlen(testDirectory) + 1;
+             *(newPath + i) != '\0'; ++i) { // Assuming no dots in directory names.
+            if (*(newPath + i) == '.') {
+                free(newPath);
+                isDirectory = 0;
+                break;
+            }
+        }
+        if (isDirectory) {
+            List *newNode = malloc(sizeof(List));
+            newNode->string = NULL;
+            current->string = newPath;
+            current->next = newNode;
+            current = newNode;
+        } else break; // Directories are listed first in the stream.
+    }
+    closedir(dir);
+    return testDirectories;
 }
 
-char **getTests(char *directory, int *numTests) {
-    return (char **) 0;
+List *getTests(List *directory) {
+    DIR *dir = opendir(directory->string);
+
+    if (!dir) {
+        printf("No directory stream found at path %s", directory->string);
+        return NULL;
+    }
+
+    List *testCases = malloc(sizeof(List));
+    testCases->string = NULL;
+    testCases->next = NULL;
+    List *current = testCases;
+    List *previous = NULL;
+    struct dirent *newFile;
+    while ((newFile = readdir(dir))) {
+        if (!strcmp(newFile->d_name, ".") || !strcmp(newFile->d_name, "..")) continue;
+        char *newPath = malloc(strlen(directory->string) + strlen(newFile->d_name) + 2);
+        sprintf(newPath, "%s/%s", directory->string, newFile->d_name);
+        int isDirectory = 1;
+        for (int i = (int) strlen(directory->string) + 1;
+             *(newPath + i) != '\0'; ++i) { // Assuming no dots in directory names.
+            if (*(newPath + i) == '.') { // Scrapping the file extension.
+                *(newPath + i) = '\0';
+                isDirectory = 0;
+                break;
+            }
+        }
+        if (!isDirectory) {
+            if (previous != NULL) {
+                if (strcmp(previous->string, newPath) == 0) {
+                    free(newPath);
+                    continue;
+                }
+            }
+            List *newNode = malloc(sizeof(List));
+            newNode->string = NULL;
+            current->string = newPath;
+            current->next = newNode;
+            previous = current;
+            current = newNode;
+        } else {
+            free(newPath);
+        }
+    }
+    closedir(dir);
+    return testCases;
 }
 
 unsigned int *getExpectedTestResult(char *path) { // For comparing the 32 registers.
