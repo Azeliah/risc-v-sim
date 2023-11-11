@@ -6,18 +6,11 @@
 
 #include "../controller/simulator.h"
 
-typedef struct List {
-    char *string;
-    struct List *next;
-} List;
-
 int *runTestSuite(Simulator *simulator);
 
-int runTest(Simulator *simulator, List *basePath);
+void runTestGroup(Simulator *simulator, int *resultArray, char *directory);
 
-List *getTestDirectories();
-
-List *getTests(List *directories);
+int runTest(Simulator *simulator, char *testPath);
 
 unsigned int *getExpectedTestResult(char *path);
 
