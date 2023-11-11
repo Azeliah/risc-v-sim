@@ -57,7 +57,6 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
              *(newPath + i) != '\0'; ++i) { // Assuming no dots in directory names.
             if (*(newPath + i) == '.') {
                 if (*(newPath + i + 1) == 'b') {
-                    printf("%s\n", newPath);
                     isTestFile = 1;
                     break;
                 }
