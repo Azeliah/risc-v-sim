@@ -4,7 +4,7 @@
 
 void initialize(Simulator *simulator, int memorySize) {
     simulator->memory = malloc(sizeof(Memory));
-    simulator->memory->startAddress = malloc(sizeof(int) * memorySize);
+    simulator->memory->startAddress = malloc(sizeof(unsigned int) * memorySize);
     simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
     initializeProcessor(simulator->processor);
@@ -17,31 +17,35 @@ void tearDown(Simulator *simulator) {
     free(simulator->processor);
 }
 
-void printRegisters(Simulator *simulator) {
-    Register *registers = simulator->processor->registers;
-    char *registerNames[] = {"zero", "ra\t", "sp\t", "gp\t", "tp\t", "t0\t", "t1\t",
-                             "t2\t", "s0/fp", "s1\t", "a0\t", "a1\t", "a2\t", "a3\t",
-                             "a4\t", "a5\t", "a6\t", "a7\t", "s2\t", "s3\t", "s4\t",
-                             "s5\t", "s6\t", "s7\t", "s8\t", "s9\t", "s10\t", "s11\t",
-                             "t3\t", "t4\t", "t5\t", "t6\t"};
-    printf("Register\tName\t\tDecimal\t\tHexadecimal\n");
+void reset(Simulator *simulator) {
+    // Re-allocate memory
+    free(simulator->memory->startAddress);
+    simulator->memory->startAddress = malloc(sizeof(unsigned int) * simulator->memory->size);
+
     for (int i = 0; i < 32; ++i) {
-        printf("x%i\t\t\t%s\t\t%i\t\t\t0x%x\n", i, registerNames[i], (registers + i)->data, (registers + i)->data);
+        (simulator->processor->registers + i)->data = 0; // Set registers to 0;
     }
 }
 
-void runTests(Simulator *simulator) {
-
-}
-
-void reset(Simulator *simulator) {
-
-}
-
 void loadProgram(Simulator *simulator, char *path) {
-
+    unsigned char tempArray[4];
+    FILE *fp;
+    fp = fopen(path, "r");
+    int i = 0;
+    if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
+    while (!feof(fp)) {
+        fread(tempArray, sizeof(tempArray), 1, fp);
+        *(simulator->memory->startAddress + i) = 0;
+        for (int j = 0; j < 4; ++j) {
+            unsigned int byte = (unsigned int) tempArray[j] << ((3 - j) * 8);
+            *(simulator->memory->startAddress + i) = *(simulator->memory->startAddress + i) | byte;
+        }
+        ++i;
+    }
+    *(simulator->memory->startAddress + i - 1) = 0; // Off by one fix
+    fclose(fp);
 }
 
 void run(Simulator *simulator) {
-
+    // TODO: Make this.
 }
