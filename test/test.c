@@ -31,7 +31,7 @@ int *runTestSuite(Simulator *simulator) {
         if (isDirectory) {
             runTestGroup(simulator, resultArray, newPath);
             free(newPath);
-        } else break; // Directories are listed first in the stream.
+        }
     }
 
     closedir(dir);
