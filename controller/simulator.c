@@ -4,10 +4,18 @@
 
 void initialize(Simulator *simulator, int memorySize) {
     simulator->memory = malloc(sizeof(Memory));
-    simulator->memory->startAddress = malloc(sizeof(unsigned int) * memorySize);
+    simulator->memory->startAddress = malloc(memorySize);
     simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
     initializeProcessor(simulator->processor);
+    for (int i = 0; i < 16; ++i) {
+        *(simulator->memory->startAddress + i) = 0;
+    }
+    *simulator->memory->startAddress = 0x12;
+    *(simulator->memory->startAddress + 1) = 0xFF;
+    for (int i = 0; i < 16; ++i) {
+        printf("%x\n", *(simulator->memory->startAddress + i));
+    }
 }
 
 void tearDown(Simulator *simulator) {
@@ -20,7 +28,7 @@ void tearDown(Simulator *simulator) {
 void reset(Simulator *simulator) {
     // Re-allocate memory
     free(simulator->memory->startAddress);
-    simulator->memory->startAddress = malloc(sizeof(unsigned int) * simulator->memory->size);
+    simulator->memory->startAddress = malloc(simulator->memory->size);
 
     for (int i = 0; i < 32; ++i) {
         (simulator->processor->registers + i)->data = 0; // Set registers to 0;
