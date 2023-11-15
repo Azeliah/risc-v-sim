@@ -8,14 +8,6 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
     initializeProcessor(simulator->processor);
-    for (int i = 0; i < 16; ++i) {
-        *(simulator->memory->startAddress + i) = 0;
-    }
-    *simulator->memory->startAddress = 0x12;
-    *(simulator->memory->startAddress + 1) = 0xFF;
-    for (int i = 0; i < 16; ++i) {
-        printf("%x\n", *(simulator->memory->startAddress + i));
-    }
 }
 
 void tearDown(Simulator *simulator) {
@@ -36,21 +28,18 @@ void reset(Simulator *simulator) {
 }
 
 void loadProgram(Simulator *simulator, char *path) {
-    unsigned char tempArray[4];
+    char c;
     FILE *fp;
     fp = fopen(path, "r");
-    int i = 0;
+    fseek(fp, 0L, SEEK_END);
+    int size = ftell(fp);
+    rewind(fp);
     if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
-    while (!feof(fp)) {
-        fread(tempArray, sizeof(tempArray), 1, fp);
-        *(simulator->memory->startAddress + i) = 0;
-        for (int j = 0; j < 4; ++j) {
-            unsigned int byte = (unsigned int) tempArray[j] << ((3 - j) * 8);
-            *(simulator->memory->startAddress + i) = *(simulator->memory->startAddress + i) | byte;
-        }
-        ++i;
+    for (int i = 0; i < size; ++i) {
+        c = (char) fgetc(fp);
+        if (c < 0) *(simulator->memory->startAddress + i) = (unsigned char) 256 + c;
+        else *(simulator->memory->startAddress + i) = (unsigned char) c;
     }
-    *(simulator->memory->startAddress + i - 1) = 0; // Off by one fix
     fclose(fp);
 }
 
