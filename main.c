@@ -4,16 +4,16 @@
 
 int main(int argc, char **argv) {
     Simulator *simulator = malloc(sizeof(Simulator));
-    initialize(simulator, 0x10000);
+    initialize(simulator, 0x100000);
 
     int test = 0;
-    if (argc == 2) if (**(argv + 1) == 't') test = 1;
+    if (argc == 2) if (argv[1][0] == 't') test = 1;
 
     if (test) {
         // Run test environment
         int *resultArray = runTestSuite(simulator);
         if (resultArray) {
-            printf("%d out of %d tests succeeded.", *resultArray, *(resultArray + 1));
+            printf("%d out of %d tests succeeded.", resultArray[0], resultArray[1]);
         }
         free(resultArray);
     } else {

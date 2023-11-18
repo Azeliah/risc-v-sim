@@ -1,8 +1,10 @@
 #ifndef RISC_V_SIM_SIMULATOR_H
 #define RISC_V_SIM_SIMULATOR_H
 
+#include <stdlib.h>
 #include "../model/processor.h"
 #include "../model/memory.h"
+#include "../utility/byteHelper.h"
 #include "../utility/outputHelper.h"
 
 typedef struct Simulator {

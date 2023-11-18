@@ -3,7 +3,7 @@
 
 typedef struct Memory {
     int size;
-    unsigned int *startAddress;
+    unsigned char *startAddress; // For byte addressable memory.
 } Memory;
 
 #endif //RISC_V_SIM_MEMORY_H

@@ -4,7 +4,7 @@
 void initializeProcessor(Processor *processor) {
     processor->registers = malloc(sizeof(Register) * 32);
     for (int i = 0; i < 32; ++i) {
-        (processor->registers + i)->data = 0; // Set registers to 0;
+        processor->registers[i].data = 0; // Set registers to 0;
     }
     processor->control = malloc(sizeof(Control));
     processor->aluControl = malloc(sizeof(AluControl));

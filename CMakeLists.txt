@@ -14,4 +14,6 @@ add_executable(risc_v_sim
         model/components/control.c model/components/control.h
         model/components/decoder.c model/components/decoder.h
         utility/outputHelper.c utility/outputHelper.h
-        test/test.c test/test.h)
+        test/test.c test/test.h
+        utility/byteHelper.c
+        utility/byteHelper.h)

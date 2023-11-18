@@ -2,8 +2,8 @@
 
 int *runTestSuite(Simulator *simulator) {
     int *resultArray = malloc(sizeof(int) * 2);
-    *resultArray = 0;
-    *(resultArray + 1) = 0;
+    resultArray[0] = 0;
+    resultArray[1] = 0;
 
     char *testDirectory = "../test";
     DIR *dir = opendir(testDirectory);
@@ -21,8 +21,8 @@ int *runTestSuite(Simulator *simulator) {
         sprintf(newPath, "%s/%s", testDirectory, newDirectory->d_name);
         int isDirectory = 1;
         for (int i = (int) strlen(testDirectory) + 1;
-             *(newPath + i) != '\0'; ++i) { // Assuming no dots in directory names.
-            if (*(newPath + i) == '.') {
+             newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
+            if (newPath[i] == '.') {
                 free(newPath);
                 isDirectory = 0;
                 break;
@@ -54,17 +54,17 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
         sprintf(newPath, "%s/%s", directory, newFile->d_name);
         int isTestFile = 0;
         for (int i = (int) strlen(directory) + 1;
-             *(newPath + i) != '\0'; ++i) { // Assuming no dots in directory names.
-            if (*(newPath + i) == '.') {
-                if (*(newPath + i + 1) == 'b') {
+             newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
+            if (newPath[i] == '.') {
+                if (newPath[i + 1] == 'b') {
                     isTestFile = 1;
                     break;
                 }
             }
         }
         if (isTestFile) {
-            *resultArray += runTest(simulator, newPath);
-            (*(resultArray + 1))++;
+            resultArray[0] += runTest(simulator, newPath);
+            resultArray[1]++;
         }
         free(newPath);
     }
@@ -78,14 +78,14 @@ int runTest(Simulator *simulator, char *testPath) {
 
     // Get expected results from file
     char *expectedResultPath = strdup(testPath);
-    *(expectedResultPath + strlen(expectedResultPath) - 3) = 'r';
-    *(expectedResultPath + strlen(expectedResultPath) - 2) = 'e';
-    *(expectedResultPath + strlen(expectedResultPath) - 1) = 's';
+    expectedResultPath[strlen(expectedResultPath) - 3] = 'r';
+    expectedResultPath[strlen(expectedResultPath) - 2] = 'e';
+    expectedResultPath[strlen(expectedResultPath) - 1] = 's';
     unsigned int *expectedResult = getExpectedTestResult(expectedResultPath);
 
     int testResult = 1;
     for (int i = 0; i < 32; ++i) {
-        if ((simulator->processor->registers + i)->data != *(expectedResult + i)) {
+        if (simulator->processor->registers[i].data != expectedResult[i]) {
             testResult = 0;
             break; // If a result does not match, the test has already failed
             // TODO: Create meaningful logging message.
@@ -97,22 +97,22 @@ int runTest(Simulator *simulator, char *testPath) {
 }
 
 unsigned int *getExpectedTestResult(char *path) { // For comparing the 32 registers.
-    unsigned int *nums = malloc(sizeof(int) * 32);
-    unsigned char tempArray[4];
+    unsigned char bytes[128];
+    char c;
     FILE *fp;
     fp = fopen(path, "r");
-    int i = 0;
+    fseek(fp, 0L, SEEK_END);
+    int size = ftell(fp);
+    rewind(fp);
     if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
-    while (!feof(fp)) {
-        if (i == 32) break; // Off by one fix
-        fread(tempArray, sizeof(tempArray), 1, fp);
-        *(nums + i) = 0;
-        for (int j = 0; j < 4; ++j) {
-            unsigned int byte = (unsigned int) tempArray[j] << ((3 - j) * 8);
-            *(nums + i) = *(nums + i) | byte;
-        }
-        ++i;
+    for (int i = 0; i < size; ++i) {
+        c = (char) fgetc(fp);
+        if (c < 0) bytes[i] = (unsigned char) 256 + c;
+        else bytes[i] = (unsigned char) c;
     }
     fclose(fp);
+    unsigned int *nums = malloc(sizeof(unsigned int) * 32);
+    for (int i = 0; i < 32; ++i)
+        nums[i] = (bytes[4 * i] << 24) + (bytes[4 * i + 1] << 16) + (bytes[4 * i + 2] << 8) + bytes[4 * i + 3];
     return nums;
 }
