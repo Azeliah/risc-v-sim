@@ -23,7 +23,7 @@ void reset(Simulator *simulator) {
     simulator->memory->startAddress = malloc(simulator->memory->size);
 
     for (int i = 0; i < 32; ++i) {
-        (simulator->processor->registers + i)->data = 0; // Set registers to 0;
+        simulator->processor->registers[i].data = 0; // Set registers to 0;
     }
 }
 
@@ -37,8 +37,8 @@ void loadProgram(Simulator *simulator, char *path) {
     if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
     for (int i = 0; i < size; ++i) {
         c = (char) fgetc(fp);
-        if (c < 0) *(simulator->memory->startAddress + i) = (unsigned char) 256 + c;
-        else *(simulator->memory->startAddress + i) = (unsigned char) c;
+        if (c < 0) simulator->memory->startAddress[i] = (unsigned char) 256 + c;
+        else simulator->memory->startAddress[i] = (unsigned char) c;
     }
     fclose(fp);
 }
