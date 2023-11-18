@@ -44,5 +44,5 @@ void loadProgram(Simulator *simulator, char *path) {
 }
 
 void run(Simulator *simulator) {
-    // TODO: Make this.
+
 }

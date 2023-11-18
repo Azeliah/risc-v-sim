@@ -97,22 +97,26 @@ int runTest(Simulator *simulator, char *testPath) {
 }
 
 unsigned int *getExpectedTestResult(char *path) { // For comparing the 32 registers.
-    unsigned int *nums = malloc(sizeof(int) * 32);
-    unsigned char tempArray[4];
+    unsigned char bytes[128];
+    char c;
     FILE *fp;
     fp = fopen(path, "r");
-    int i = 0;
+    fseek(fp, 0L, SEEK_END);
+    int size = ftell(fp);
+    rewind(fp);
     if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
-    while (!feof(fp)) {
-        if (i == 32) break; // Off by one fix
-        fread(tempArray, sizeof(tempArray), 1, fp);
-        *(nums + i) = 0;
-        for (int j = 0; j < 4; ++j) {
-            unsigned int byte = (unsigned int) tempArray[j] << ((3 - j) * 8);
-            *(nums + i) = *(nums + i) | byte;
-        }
-        ++i;
+    for (int i = 0; i < size; ++i) {
+        c = (char) fgetc(fp);
+        if (c < 0) *(bytes + i) = (unsigned char) 256 + c;
+        else *(bytes + i) = (unsigned char) c;
     }
     fclose(fp);
+    unsigned int *nums = malloc(sizeof(unsigned int) * 32);
+    for (int i = 0; i < 32; ++i) {
+        nums[i] = ((unsigned int) bytes[4 * i] << 24)
+                + ((unsigned int) bytes[4 * i + 1] << 16)
+                + ((unsigned int) bytes[4 * i + 2] << 8)
+                + (unsigned int) bytes[4 * i + 3];
+    }
     return nums;
 }

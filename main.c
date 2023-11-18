@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
     Simulator *simulator = malloc(sizeof(Simulator));
-    initialize(simulator, 0x80000);
+    initialize(simulator, 0x100000);
 
     int test = 0;
     if (argc == 2) if (**(argv + 1) == 't') test = 1;
