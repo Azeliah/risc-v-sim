@@ -1,5 +1,6 @@
 #ifndef RISC_V_SIM_PROCESSOR_H
 #define RISC_V_SIM_PROCESSOR_H
+
 #include "components/alu.h"
 #include "components/aluControl.h"
 #include "components/register.h"
@@ -9,7 +10,7 @@
 #include "components/multiplexer.h"
 #include "components/immediateModule.h"
 
-typedef struct Processor{
+typedef struct Processor {
     RegisterModule *registerModule;
     Control *control;
     AluControl *aluControl;
@@ -22,4 +23,5 @@ typedef struct Processor{
 void initializeProcessor(Processor *processor);
 
 void tearDownProcessor(Processor *processor);
+
 #endif //RISC_V_SIM_PROCESSOR_H

@@ -6,7 +6,7 @@ void selectRegisters(RegisterModule *registerModule) {
 }
 
 void writeToRegister(RegisterModule *registerModule) {
-    if(*registerModule->writeSignal) {
+    if (*registerModule->writeSignal) {
         if (!*registerModule->writeRegister) { // If writeRegister is 0, no update is needed.
             registerModule->registers[*registerModule->writeRegister].data = *registerModule->writeValue;
         }

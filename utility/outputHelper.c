@@ -44,6 +44,7 @@ void printMemory(Memory *memory) { // If there exists a 0 in the program, this w
         printMemoryData(*ptr++);
     }
 }
+
 // FIXME: This entire file doesn't work properly after memory change from ints to chars.
 void printMemoryBytesReversed(Memory *memory) {
     unsigned char *ptr = memory->startAddress;

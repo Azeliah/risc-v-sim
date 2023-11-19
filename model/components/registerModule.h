@@ -15,6 +15,7 @@ typedef struct RegisterModule {
 } RegisterModule;
 
 void selectRegisters(RegisterModule *registerModule);
+
 void writeToRegister(RegisterModule *registerModule);
 
 #endif //RISC_V_SIM_REGISTER_MODULE_H
