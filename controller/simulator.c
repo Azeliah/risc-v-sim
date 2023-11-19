@@ -1,5 +1,3 @@
-#include <malloc.h>
-#include <stdio.h>
 #include "simulator.h"
 
 void initialize(Simulator *simulator, int memorySize) {
@@ -7,7 +5,10 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->memory->startAddress = malloc(memorySize);
     simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
+    simulator->programCounter = 0;
     initializeProcessor(simulator->processor);
+    // Linking components
+    simulator->processor->decoder->instructionInput = &simulator->instruction;
 }
 
 void tearDown(Simulator *simulator) {
@@ -43,6 +44,27 @@ void loadProgram(Simulator *simulator, char *path) {
     fclose(fp);
 }
 
+/*
+ * The run command simply continues execution until runCycle() returns a 0 value.
+ */
 void run(Simulator *simulator) {
+    while (runCycle(simulator)) {
 
+    }
+}
+
+/*
+ * The runCycle simulates a single cycle in the processor and updates the values in the structures.
+ * It operates with the phases of the single-cycle RISC-V implementation, that is:
+ * * Fetch instruction from memory (incl. converting from Little-Endian to Big-Endian).
+ * * Decode instruction and generate the immediate value.
+ * * Execute the instruction in the ALU, using the control signals.
+ * * Do necessary memory access - read or write.
+ * * Write back from memory to the destination register (x0, if not otherwise specified).
+ */
+int runCycle(Simulator *simulator) {
+    // Fetching instruction - conversion to Big-Endian happens in bytesToUInt()
+    simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
+    // Decoding instruction
+    return 0;
 }

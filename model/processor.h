@@ -4,12 +4,14 @@
 #include "components/aluControl.h"
 #include "components/register.h"
 #include "components/control.h"
+#include "components/decoder.h"
 
 typedef struct Processor{
     Register *registers;
     Control *control;
     AluControl *aluControl;
     Alu *alu;
+    Decoder *decoder;
 } Processor;
 
 void initializeProcessor(Processor *processor);
