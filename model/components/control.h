@@ -2,12 +2,16 @@
 #define RISC_V_SIM_CONTROL_H
 
 typedef struct Control {
-    int branch;
-    int memRead;
-    int memToReg;
-    int aluOp;
-    int memWrite;
-    int aluSource;
-    int registerWrite;
+    unsigned int *input;
+    unsigned int branch;
+    unsigned int memRead;
+    unsigned int memToReg;
+    unsigned int aluOp;
+    unsigned int memWrite;
+    unsigned int aluSource;
+    unsigned int registerWrite;
 } Control;
+
+void updateControlSignals(Control *control);
+
 #endif //RISC_V_SIM_CONTROL_H

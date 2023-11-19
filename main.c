@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
         else fp = "../test/task1/addlarge.bin";
 
         loadProgram(simulator, fp);
-        printRegisters(simulator->processor->registers);
+        printRegisters(simulator->processor->registerModule->registers);
     }
     tearDown(simulator);
     free(simulator);

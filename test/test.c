@@ -85,7 +85,7 @@ int runTest(Simulator *simulator, char *testPath) {
 
     int testResult = 1;
     for (int i = 0; i < 32; ++i) {
-        if (simulator->processor->registers[i].data != expectedResult[i]) {
+        if (simulator->processor->registerModule->registers[i].data != expectedResult[i]) {
             testResult = 0;
             break; // If a result does not match, the test has already failed
             // TODO: Create meaningful logging message.

@@ -4,10 +4,14 @@
 #include "register.h"
 
 typedef struct Alu {
-    Register *input1;
-    Register *input2;
-    Register *output;
+    unsigned int *input1;
+    unsigned int *input2;
+    unsigned int *branchControl;
+    unsigned int *op;
+    unsigned int branchSignal;
+    unsigned int output;
 } Alu;
 
+void doOperation(Alu *alu);
 
 #endif //RISC_V_SIM_ALU_H
