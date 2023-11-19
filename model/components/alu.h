@@ -12,4 +12,6 @@ typedef struct Alu {
     unsigned int output;
 } Alu;
 
+void doOperation(Alu *alu);
+
 #endif //RISC_V_SIM_ALU_H

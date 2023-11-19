@@ -11,4 +11,7 @@ typedef struct Control {
     unsigned int aluSource;
     unsigned int registerWrite;
 } Control;
+
+void updateControlSignals(Control *control);
+
 #endif //RISC_V_SIM_CONTROL_H

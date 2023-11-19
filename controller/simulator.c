@@ -125,4 +125,6 @@ unsigned int runCycle(Simulator *simulator) {
     executeAdder(simulator->pcAddImm);
     selectOutput(simulator->pcMux);
     simulator->programCounter = simulator->pcMux->output;
+
+    return simulator->instruction;
 }

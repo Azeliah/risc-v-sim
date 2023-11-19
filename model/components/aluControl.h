@@ -8,4 +8,6 @@ typedef struct AluControl {
     unsigned int output;
 } AluControl;
 
+void updateAluControlSignal(AluControl *aluControl);
+
 #endif //RISC_V_SIM_ALUCONTROL_H
