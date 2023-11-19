@@ -8,10 +8,16 @@
 #include "../model/memory.h"
 #include "../utility/byteHelper.h"
 #include "../utility/outputHelper.h"
+#include "../model/components/adder.h"
 
 typedef struct Simulator {
     Processor *processor;
     Memory *memory;
+    Multiplexer *memoryMux;
+    Multiplexer *pcMux;
+    Adder *pcAdd4;
+    Adder *pcAddImm;
+    unsigned int pcIncrement;
     unsigned int programCounter;
     unsigned int instruction;
 } Simulator;
@@ -28,6 +34,6 @@ void loadProgram(Simulator *simulator, char *path);
 
 void run(Simulator *simulator);
 
-int runCycle(Simulator *simulator);
+unsigned int runCycle(Simulator *simulator);
 
 #endif //RISC_V_SIM_SIMULATOR_H

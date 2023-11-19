@@ -39,14 +39,14 @@ void printMemoryData(unsigned int num) {
 }
 
 void printMemory(Memory *memory) { // If there exists a 0 in the program, this will terminate prematurely.
-    unsigned int *ptr = memory->startAddress;
+    unsigned char *ptr = memory->startAddress;
     while (*ptr) {
         printMemoryData(*ptr++);
     }
 }
-
+// FIXME: This entire file doesn't work properly after memory change from ints to chars.
 void printMemoryBytesReversed(Memory *memory) {
-    unsigned int *ptr = memory->startAddress;
+    unsigned char *ptr = memory->startAddress;
     while (*ptr) {
         printMemoryDataBytesReversed(*ptr++);
     }

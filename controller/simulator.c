@@ -3,17 +3,43 @@
 void initialize(Simulator *simulator, int memorySize) {
     simulator->memory = malloc(sizeof(Memory));
     simulator->memory->startAddress = malloc(memorySize);
-    simulator->memory->size = memorySize;
     simulator->processor = malloc(sizeof(Processor));
-    simulator->programCounter = 0;
+    simulator->memoryMux = malloc(sizeof(Multiplexer));
+    simulator->pcMux = malloc(sizeof(Multiplexer));
+    simulator->pcAdd4 = malloc(sizeof(Adder));
+    simulator->pcAddImm = malloc(sizeof(Adder));
+
     initializeProcessor(simulator->processor);
+
+    simulator->memory->size = memorySize;
+    simulator->programCounter = 0;
+    simulator->pcIncrement = 4;
+
     // Linking components
     simulator->processor->decoder->instructionInput = &simulator->instruction;
+
+    simulator->pcMux->signal = &simulator->processor->alu->branchSignal;
+    simulator->pcMux->input1 = &simulator->pcAdd4->output;
+    simulator->pcMux->input2 = &simulator->pcAddImm->output;
+
+    simulator->memoryMux->input1 = &simulator->processor->alu->output;
+    simulator->memoryMux->input2 = NULL;
+    simulator->memoryMux->signal = &simulator->processor->control->memToReg;
+
+    simulator->pcAddImm->input1 = &simulator->programCounter;
+    simulator->pcAddImm->input2 = &simulator->processor->immediateModule->output;
+
+    simulator->pcAdd4->input1 = &simulator->programCounter;
+    simulator->pcAdd4->input2 = &simulator->pcIncrement;
 }
 
 void tearDown(Simulator *simulator) {
     free(simulator->memory->startAddress);
     free(simulator->memory);
+    free(simulator->memoryMux);
+    free(simulator->pcMux);
+    free(simulator->pcAdd4);
+    free(simulator->pcAddImm);
     tearDownProcessor(simulator->processor);
     free(simulator->processor);
 }
@@ -24,7 +50,7 @@ void reset(Simulator *simulator) {
     simulator->memory->startAddress = malloc(simulator->memory->size);
 
     for (int i = 0; i < 32; ++i) {
-        simulator->processor->registers[i].data = 0; // Set registers to 0;
+        simulator->processor->registerModule->registers[i].data = 0; // Set registers to 0;
     }
 }
 
@@ -62,7 +88,7 @@ void run(Simulator *simulator) {
  * * Do necessary memory access - read or write.
  * * Write back from memory to the destination register (x0, if not otherwise specified).
  */
-int runCycle(Simulator *simulator) {
+unsigned int runCycle(Simulator *simulator) {
     // Fetching instruction - conversion to Big-Endian happens in bytesToUInt()
     simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
     // Decoding instruction

@@ -5,12 +5,17 @@
 #include "components/register.h"
 #include "components/control.h"
 #include "components/decoder.h"
+#include "components/registerModule.h"
+#include "components/multiplexer.h"
+#include "components/immediateModule.h"
 
 typedef struct Processor{
-    Register *registers;
+    RegisterModule *registerModule;
     Control *control;
     AluControl *aluControl;
     Alu *alu;
+    Multiplexer *aluMux;
+    ImmediateModule *immediateModule;
     Decoder *decoder;
 } Processor;
 
