@@ -9,7 +9,6 @@ void initializeProcessor(Processor *processor) {
     }
     processor->control = malloc(sizeof(Control));
     processor->aluControl = malloc(sizeof(AluControl));
-    processor->aluControl->opType = &processor->control->aluOp;
     processor->alu = malloc(sizeof(Alu));
     processor->aluMux = malloc(sizeof(Multiplexer));
     processor->decoder = malloc(sizeof(Decoder));

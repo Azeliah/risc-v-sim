@@ -26,8 +26,6 @@ void initialize(Simulator *simulator, int memorySize);
 
 void tearDown(Simulator *simulator);
 
-void runTests(Simulator *simulator);
-
 void reset(Simulator *simulator);
 
 void loadProgram(Simulator *simulator, char *path);
