@@ -7,6 +7,6 @@ typedef struct Adder {
     unsigned int output;
 } Adder;
 
-void execute(Adder *adder);
+void executeAdder(Adder *adder);
 
 #endif //RISC_V_SIM_ADDER_H

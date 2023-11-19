@@ -5,10 +5,10 @@ void selectRegisters(RegisterModule *registerModule) {
     registerModule->output2 = registerModule->registers[*registerModule->register2].data;
 }
 
-void writeToRegister(RegisterModule *registerModule, unsigned int value) {
+void writeToRegister(RegisterModule *registerModule) {
     if(*registerModule->writeSignal) {
         if (!*registerModule->writeRegister) { // If writeRegister is 0, no update is needed.
-            registerModule->registers[*registerModule->writeRegister].data = value;
+            registerModule->registers[*registerModule->writeRegister].data = *registerModule->writeValue;
         }
     }
 }

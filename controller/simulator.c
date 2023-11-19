@@ -23,7 +23,7 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->pcMux->input2 = &simulator->pcAddImm->output;
 
     simulator->memoryMux->input1 = &simulator->processor->alu->output;
-    simulator->memoryMux->input2 = NULL;
+    simulator->memoryMux->input2 = &simulator->memory->memOutRegister.data;
     simulator->memoryMux->signal = &simulator->processor->control->memToReg;
 
     simulator->pcAddImm->input1 = &simulator->programCounter;
@@ -31,6 +31,8 @@ void initialize(Simulator *simulator, int memorySize) {
 
     simulator->pcAdd4->input1 = &simulator->programCounter;
     simulator->pcAdd4->input2 = &simulator->pcIncrement;
+
+    simulator->processor->registerModule->writeValue = &simulator->memoryMux->output;
 }
 
 void tearDown(Simulator *simulator) {
@@ -89,8 +91,38 @@ void run(Simulator *simulator) {
  * * Write back from memory to the destination register (x0, if not otherwise specified).
  */
 unsigned int runCycle(Simulator *simulator) {
-    // Fetching instruction - conversion to Big-Endian happens in bytesToUInt()
+    // Fetch instruction - conversion to Big-Endian happens in bytesToUInt()
     simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
-    // Decoding instruction
-    return 0;
+
+    // Decode instruction
+    decodeInstruction(simulator->processor->decoder);
+    generateImmediate(simulator->processor->immediateModule);
+
+    // Set control signals
+    updateControlSignals(simulator->processor->control);
+    updateAluControlSignal(simulator->processor->aluControl);
+
+    // Select second input value for ALU and complete computation
+    selectOutput(simulator->processor->aluMux);
+    doOperation(simulator->processor->alu);
+
+    // Access memory to read or write
+    if (simulator->processor->control->memRead) {
+        simulator->memory->memOutRegister.data = bytesToUInt(
+                &simulator->memory->startAddress[simulator->processor->alu->output]);
+    }
+    if (simulator->processor->control->memWrite) {
+        uIntToBytes(simulator->processor->registerModule->output2,
+                    &simulator->memory->startAddress[simulator->processor->alu->output]);
+    }
+
+    // Write to registers
+    selectOutput(simulator->memoryMux);
+    writeToRegister(simulator->processor->registerModule);
+
+    // Update program counter
+    executeAdder(simulator->pcAdd4);
+    executeAdder(simulator->pcAddImm);
+    selectOutput(simulator->pcMux);
+    simulator->programCounter = simulator->pcMux->output;
 }

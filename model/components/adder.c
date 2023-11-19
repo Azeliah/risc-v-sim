@@ -1,5 +1,5 @@
 #include "adder.h"
 
-void execute(Adder *adder) {
+void executeAdder(Adder *adder) {
     adder->output = *adder->input1 + *adder->input2;
 }

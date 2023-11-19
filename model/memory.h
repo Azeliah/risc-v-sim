@@ -1,8 +1,11 @@
 #ifndef RISC_V_SIM_MEMORY_H
 #define RISC_V_SIM_MEMORY_H
 
+#include "components/register.h"
+
 typedef struct Memory {
-    int size;
+    unsigned int size;
+    Register memOutRegister;
     unsigned char *startAddress; // For byte addressable memory.
 } Memory;
 
