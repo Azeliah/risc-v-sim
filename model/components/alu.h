@@ -50,4 +50,6 @@ void branchLessThanU(Alu *alu);
 
 void branchGreaterEqualsU(Alu *alu);
 
+int convertToSigned(unsigned int num);
+
 #endif //RISC_V_SIM_ALU_H
