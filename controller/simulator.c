@@ -33,6 +33,10 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->pcAdd4->input2 = &simulator->pcIncrement;
 
     simulator->processor->registerModule->writeValue = &simulator->memoryMux->output;
+
+    simulator->memory->writeData = &simulator->processor->registerModule->output2;
+    simulator->memory->writeSignal = &simulator->processor->control->memWrite;
+    simulator->memory->dataType = &simulator->processor->decoder->func3;
 }
 
 void tearDown(Simulator *simulator) {
@@ -108,6 +112,7 @@ unsigned int runCycle(Simulator *simulator) {
     doOperation(simulator->processor->alu);
 
     // Access memory to read or write
+    // FIXME: Set up option for byte, halfWord and word data types.
     if (simulator->processor->control->memRead) {
         simulator->memory->memOutRegister.data = bytesToUInt(
                 &simulator->memory->startAddress[simulator->processor->alu->output]);
