@@ -28,6 +28,7 @@ void initializeProcessor(Processor *processor) {
     processor->aluControl->opType = &processor->control->aluOp;
     processor->aluControl->func3 = &processor->decoder->func3;
     processor->aluControl->bit30 = &processor->decoder->bit30;
+    processor->aluControl->branch = &processor->control->branch;
 
     // Alu
     processor->alu->input1 = &processor->registerModule->output1;
