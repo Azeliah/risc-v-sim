@@ -6,7 +6,7 @@ void updateControlSignals(Control *control) {
     control->memToReg = 0;
     control->branch = 0;
     control->aluSource = 0;
-    control->aluOp = 0; // to be decided
+    control->aluOp = 0; // 0b00(0) when add, 0b01(1) when subtract, 0b10(2) when func3/7 decides
     control->registerWrite = 0;
     // TODO: Less giant switch case
     switch (*control->input) {
@@ -15,7 +15,6 @@ void updateControlSignals(Control *control) {
             control->memToReg = 1;
             control->registerWrite = 1;
             control->memRead = 1;
-            // aluOp = add
             break;
         case 0x0F: // Fence instructions
             // Not implemented
@@ -23,7 +22,7 @@ void updateControlSignals(Control *control) {
         case 0x13: // Immediate arithmetic instructions
             control->aluSource = 1;
             control->registerWrite = 1;
-            // aluOp = func3/7               control->aluOp = 0b10;
+            control->aluOp = 0b10;
             break;
         case 0x17: // Add upper immediate to program counter
             control->branch = 1;
@@ -31,20 +30,18 @@ void updateControlSignals(Control *control) {
         case 0x23: // Save instructions
             control->aluSource = 1;
             control->memWrite = 1;
-            // aluOp = add
             break;
         case 0x33: // Register arithmetic instructions
             control->registerWrite = 1;
-            // aluUp = func3/7            control->aluOp = 0b10;
+            control->aluOp = 0b10;
             break;
         case 0x37: // Load upper immediate
             control->aluSource = 1;
             control->registerWrite = 1;
-            // aluOp = add
             break;
         case 0x63: // Branch instructions
             control->branch = 1;
-            // aluOp = func3/7
+            control->aluOp = 0b10;
             break;
         case 0x67: // Jump and link register
             control->aluSource = 1;
