@@ -1,6 +1,8 @@
 #ifndef RISC_V_SIM_CONTROL_H
 #define RISC_V_SIM_CONTROL_H
 
+#include <stdio.h>
+
 typedef struct Control {
     unsigned int *input;
     unsigned int branch;

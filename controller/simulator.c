@@ -98,9 +98,10 @@ unsigned int runCycle(Simulator *simulator) {
     decodeInstruction(simulator->processor->decoder);
     generateImmediate(simulator->processor->immediateModule);
 
-    // Set control signals
+    // Set control signals and set registers
     updateControlSignals(simulator->processor->control);
     updateAluControlSignal(simulator->processor->aluControl);
+    selectRegisters(simulator->processor->registerModule);
 
     // Select second input value for ALU and complete computation
     selectOutput(simulator->processor->aluMux);

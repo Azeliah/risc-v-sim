@@ -1,7 +1,15 @@
 #include "decoder.h"
 
-
 void decodeInstruction(Decoder *decoder) {
+    unsigned int instruction = *decoder->instructionInput;
+    decoder->opcode = instruction & 0x7F;
+    decoder->r1Address = (instruction >> 15) & 0x1F;
+    decoder->r2Address = (instruction >> 20) & 0x1F;
+    decoder->rwAddress = (instruction >> 7) & 0x1F;
+    decoder->immediateBits = instruction;
+    decoder->func3 = (instruction >> 12) & 0x7;
+    decoder->bit30 = (instruction >> 30) & 0x1;
+    /*
     unsigned int opCode = *decoder->instructionInput & 0x7F;         //opCode is the 7 least significant bits
     unsigned int func3 = (*decoder->instructionInput >> 12) & 0x7;   //func 3 are bits 12-14
     unsigned int func7 = (*decoder->instructionInput >> 25);         //func7 are bits 25-31
@@ -195,5 +203,5 @@ void decodeInstruction(Decoder *decoder) {
             decoder->opCode = NOP;
             fprintf(stderr, "unknown instruction: %x", *decoder->instructionInput);
             break;
-    }
+    } */
 }

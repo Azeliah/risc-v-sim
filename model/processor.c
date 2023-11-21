@@ -9,7 +9,6 @@ void initializeProcessor(Processor *processor) {
     }
     processor->control = malloc(sizeof(Control));
     processor->aluControl = malloc(sizeof(AluControl));
-    processor->aluControl->opType = &processor->control->aluOp;
     processor->alu = malloc(sizeof(Alu));
     processor->aluMux = malloc(sizeof(Multiplexer));
     processor->decoder = malloc(sizeof(Decoder));
@@ -23,11 +22,11 @@ void initializeProcessor(Processor *processor) {
     processor->registerModule->writeRegister = &processor->decoder->rwAddress;
 
     // Control
-    processor->control->input = &processor->decoder->opCode;
+    processor->control->input = &processor->decoder->opcode;
 
     // AluControl
     processor->aluControl->opType = &processor->control->aluOp;
-    processor->aluControl->funct3 = &processor->decoder->funct3;
+    processor->aluControl->func3 = &processor->decoder->func3;
     processor->aluControl->bit30 = &processor->decoder->bit30;
 
     // Alu
