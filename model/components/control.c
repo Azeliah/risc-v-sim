@@ -8,7 +8,7 @@ void updateControlSignals(Control *control) {
     control->aluSource = 0;
     control->aluOp = 0;
     control->registerWrite = 0;
-    // TODO: Less giant switch case
+
     switch (*control->input) {
         case 0x03: // Load instructions
             break;
@@ -30,7 +30,7 @@ void updateControlSignals(Control *control) {
             break;
         case 0x6F: // Jump and link
             break;
-        case 0x73: // ecall, ebreak and CSRR.
+        case 0x73: // ecall, ebreak and CSRR
             break;
         default:
             printf("Invalid opcode: %x\n", *control->input);
