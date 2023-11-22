@@ -76,6 +76,37 @@ void updateAluControlSignal(AluControl *aluControl) {
                     break;
             }
             break;
+        case 0b11:
+            switch (*aluControl->func3) {
+                case 0b000:
+                    aluControl->output = add;
+                    break;
+                case 0b111:
+                    aluControl->output = and;
+                    break;
+                case 0b110:
+                    aluControl->output = or;
+                    break;
+                case 0b100:
+                    aluControl->output = xor;
+                    break;
+                case 0b001:
+                    aluControl->output = sll;
+                    break;
+                case 0b101:
+                    if(*aluControl->bit30) aluControl->output = sra;
+                    else aluControl->output = srl;
+                    break;
+                case 0b010:
+                    aluControl->output = slt;
+                    break;
+                case 0b011:
+                    aluControl->output = sltu;
+                    break;
+                default:
+                    printf("wrong func3/7???? should not be able to run");
+                    break;
+            }
         default:
             break;
     }
