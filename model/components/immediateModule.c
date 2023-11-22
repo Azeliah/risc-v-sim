@@ -1,12 +1,5 @@
 #include "immediateModule.h"
 
-unsigned int signExtend(unsigned int num, int mostSignificant) {
-    unsigned int sign = (1 << mostSignificant) & num;
-    if (sign) {
-        return num | (0xFFFFFFFF << (mostSignificant + 1));
-    } else return num;
-}
-
 void generateImmediate(ImmediateModule *immediateModule) {
     immediateModule->output = 0;
     unsigned int instruction = *immediateModule->input;
