@@ -107,8 +107,9 @@ void run(Simulator *simulator) {
  * * Write back from memory to the destination register (x0, if not otherwise specified).
  */
 void runCycle(Simulator *simulator) {
-    // Fetch instruction - conversion to Big-Endian happens in bytesToUInt()
-    simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
+    // Fetch instruction
+    simulator->instruction = fetchInstruction(simulator->memory, simulator->programCounter);
+
     if (simulator->postInstruction) {
         printf("Line 0x%x: ", simulator->programCounter);
         postInstruction(simulator->instruction);
@@ -132,12 +133,10 @@ void runCycle(Simulator *simulator) {
     // Access memory to read or write
     // FIXME: Set up option for byte, halfWord and word data types.
     if (simulator->processor->control->memRead) {
-        simulator->memory->memOutRegister.data = bytesToUInt(
-                &simulator->memory->startAddress[simulator->processor->alu->output]);
+        loadData(simulator->memory, simulator->processor->alu->output);
     }
     if (simulator->processor->control->memWrite) {
-        uIntToBytes(simulator->processor->registerModule->output2,
-                    &simulator->memory->startAddress[simulator->processor->alu->output]);
+        saveData(simulator->memory, simulator->processor->alu->output);
     }
 
     // Write to registers
@@ -146,7 +145,7 @@ void runCycle(Simulator *simulator) {
 
     // Update program counter
     executeAdder(simulator->pcAdd4);
-    executeAdder(simulator->pcAddImm); // FIXME: Adder adds unsigned integers together, so negative numbers are broken........
+    executeAdder(simulator->pcAddImm);
     selectOutput(simulator->pcMux);
     simulator->programCounter = simulator->pcMux->output;
     if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
