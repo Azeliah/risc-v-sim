@@ -2,16 +2,13 @@
 #define RISC_V_SIM_ALU_H
 
 #include "register.h"
-
-enum opCodeSignal {
-    add, sub, and, or, xor, sl, srl, sra, slt, sltu, beq, bne, blt, bge, bltu, bgeu
-};
+#include "aluControl.h"
 
 typedef struct Alu {
     unsigned int *input1;
     unsigned int *input2;
     unsigned int *branchControl;
-    enum opCodeSignal *op;
+    enum aluCtrlToAluSignal *op;
     unsigned int branchSignal;
     unsigned int output;
 } Alu;
