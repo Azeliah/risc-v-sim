@@ -22,6 +22,9 @@ void initialize(Simulator *simulator, int memorySize) {
     // Linking components
     simulator->processor->decoder->instructionInput = &simulator->instruction;
 
+    simulator->ecallSignal = &simulator->processor->control->ecall;
+    simulator->ecallType = &simulator->processor->registerModule->registers[17].data;
+
     simulator->pcMux->signal = &simulator->processor->alu->branchSignal;
     simulator->pcMux->input1 = &simulator->pcAdd4->output;
     simulator->pcMux->input2 = &simulator->pcAddImm->output;
@@ -66,6 +69,7 @@ void reset(Simulator *simulator) {
     }
 
     simulator->programCounter = 0;
+    simulator->simulatorStatus = running;
 }
 
 void loadProgram(Simulator *simulator, char *path) {
@@ -88,11 +92,8 @@ void loadProgram(Simulator *simulator, char *path) {
  * The run command simply continues execution until runCycle() returns a 0 value.
  */
 void run(Simulator *simulator) {
-    while (1) {
-        unsigned int result = runCycle(simulator);
-        if (result == 0) {
-            break;
-        }
+    while (simulator->simulatorStatus == running) {
+        runCycle(simulator);
     }
 }
 
@@ -105,12 +106,15 @@ void run(Simulator *simulator) {
  * * Do necessary memory access - read or write.
  * * Write back from memory to the destination register (x0, if not otherwise specified).
  */
-unsigned int runCycle(Simulator *simulator) {
+void runCycle(Simulator *simulator) {
     // Fetch instruction - conversion to Big-Endian happens in bytesToUInt()
     simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
-    if (simulator->postInstruction) postInstruction(simulator->instruction);
+    if (simulator->postInstruction) {
+        printf("Line 0x%x: ", simulator->programCounter);
+        postInstruction(simulator->instruction);
+    }
     if (simulator->instruction == 0) {
-        return simulator->instruction;
+        simulator->simulatorStatus = zeroInstruction;
     }
     // Decode instruction
     decodeInstruction(simulator->processor->decoder);
@@ -145,6 +149,5 @@ unsigned int runCycle(Simulator *simulator) {
     executeAdder(simulator->pcAddImm); // FIXME: Adder adds unsigned integers together, so negative numbers are broken........
     selectOutput(simulator->pcMux);
     simulator->programCounter = simulator->pcMux->output;
-
-    return simulator->instruction;
+    if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
 }

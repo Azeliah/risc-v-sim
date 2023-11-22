@@ -8,6 +8,7 @@ void updateControlSignals(Control *control) {
     control->aluSource = 0;
     control->aluOp = 0; // 0b00(0) when add, 0b01(1) when subtract, 0b10(2) when func3/7 decides
     control->registerWrite = 0;
+    control->ecall = 0;
 
     switch (*control->input) {
         case 0x03: // Load instructions
@@ -56,7 +57,7 @@ void updateControlSignals(Control *control) {
             // FIXME
             break;
         case 0x73: // ecall, ebreak and CSRR.
-            // FIXME exit?
+            control->ecall = 1;
             break;
         default:
             printf("Invalid opcode: %x\n", *control->input);

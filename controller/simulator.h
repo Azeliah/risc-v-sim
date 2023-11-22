@@ -10,6 +10,10 @@
 #include "../utility/outputHelper.h"
 #include "../model/components/adder.h"
 
+enum simulatorStatus {
+    running, ecallExit, zeroInstruction
+};
+
 typedef struct Simulator {
     Processor *processor;
     Memory *memory;
@@ -17,10 +21,13 @@ typedef struct Simulator {
     Multiplexer *pcMux;
     Adder *pcAdd4;
     Adder *pcAddImm;
+    unsigned int *ecallSignal;
+    unsigned int *ecallType;
     unsigned int postInstruction;
     unsigned int pcIncrement;
     unsigned int programCounter;
     unsigned int instruction;
+    enum simulatorStatus simulatorStatus;
 } Simulator;
 
 void initialize(Simulator *simulator, int memorySize);
@@ -33,6 +40,6 @@ void loadProgram(Simulator *simulator, char *path);
 
 void run(Simulator *simulator);
 
-unsigned int runCycle(Simulator *simulator);
+void runCycle(Simulator *simulator);
 
 #endif //RISC_V_SIM_SIMULATOR_H
