@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "../model/processor.h"
 #include "../model/memory.h"
-#include "../utility/byteHelper.h"
+#include "../utility/conversionHelper.h"
 #include "../utility/outputHelper.h"
 #include "../model/components/adder.h"
 
@@ -17,6 +17,7 @@ typedef struct Simulator {
     Multiplexer *pcMux;
     Adder *pcAdd4;
     Adder *pcAddImm;
+    unsigned int postInstruction;
     unsigned int pcIncrement;
     unsigned int programCounter;
     unsigned int instruction;
