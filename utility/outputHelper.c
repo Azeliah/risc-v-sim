@@ -101,18 +101,15 @@ void postInstruction(unsigned int instruction) {
                     break;
                 case 0x4:
                     operation = "lhu";
-                    uImm = 1;
                     break;
                 case 0x5:
                     operation = "lbu";
-                    uImm = 1;
                     break;
                 default:
                     printf("Unknown load instruction: %x\n", instruction);
                     return;
 
             }
-            uImmediate = getUImmediateI(instruction);
             immediate = getImmediateI(instruction);
             break;
         case 0x0F: // Fence - not in use.
