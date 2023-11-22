@@ -23,7 +23,7 @@ void updateControlSignals(Control *control) {
         case 0x13: // Immediate arithmetic instructions
             control->aluSource = 1;
             control->registerWrite = 1;
-            control->aluOp = 0b10;
+            control->aluOp = 0b11;
             break;
         case 0x17: // Add upper immediate to program counter
             control->branch = 1;

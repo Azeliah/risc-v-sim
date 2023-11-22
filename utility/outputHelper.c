@@ -79,9 +79,7 @@ void postInstruction(unsigned int instruction) {
     unsigned int funct3 = (instruction >> 12) & 0x7;
     unsigned int bit30 = (instruction >> 30) & 0x1;
     char *operation;
-    unsigned int uImmediate;
     int immediate;
-    int uImm = 0;
     unsigned int sr1 = (instruction >> 15) & 0x1F;
     unsigned int sr2 = (instruction >> 20) & 0x1F;
     unsigned int dr = (instruction >> 7) & 0x1F;
@@ -110,7 +108,7 @@ void postInstruction(unsigned int instruction) {
                     return;
 
             }
-            immediate = getImmediateI(instruction);
+            immediate = (int) getImmediateI(instruction);
             break;
         case 0x0F: // Fence - not in use.
             printf("Fence instruction, not in use.\n");
@@ -128,7 +126,6 @@ void postInstruction(unsigned int instruction) {
                     operation = "slti";
                     break;
                 case 0x3:
-                    uImm = 1;
                     operation = "sltiu";
                     break;
                 case 0x4:
@@ -148,15 +145,18 @@ void postInstruction(unsigned int instruction) {
                     printf("Unknown immediate arithmetic instruction: %x\n", instruction);
                     return;
             }
-            uImmediate = getUImmediateI(instruction);
-            immediate = getImmediateI(instruction);
+            if (funct3 == 0x5) {
+                immediate = (int) getImmediateIShift(instruction);
+            } else {
+                immediate = (int) getImmediateI(instruction);
+            }
             break;
-        case 0x17: // U type, signed imm
+        case 0x17: // U type
             opType = u;
             operation = "auipc";
-            immediate = getImmediateU(instruction);
+            immediate = (int) getImmediateU(instruction);
             break;
-        case 0x23: // S type, signed imm
+        case 0x23: // S type
             opType = s;
             switch (funct3) {
                 case 0x0:
@@ -172,7 +172,7 @@ void postInstruction(unsigned int instruction) {
                     printf("Unknown save instruction: %x\n", instruction);
                     return;
             }
-            immediate = getImmediateS(instruction);
+            immediate = (int) getImmediateS(instruction);
             break;
         case 0x33: // R type, no imm
             opType = r;
@@ -208,12 +208,12 @@ void postInstruction(unsigned int instruction) {
                     return;
             }
             break;
-        case 0x37: // U type, signed imm
+        case 0x37: // U type
             opType = u;
             operation = "lui";
-            immediate = getImmediateU(instruction);
+            immediate = (int) getImmediateU(instruction);
             break;
-        case 0x63: // SB type, signed imm
+        case 0x63: // SB type
             opType = sb;
             switch (funct3) {
                 case 0x0:
@@ -238,9 +238,9 @@ void postInstruction(unsigned int instruction) {
                     printf("Unknown branch instruction: %x\n", instruction);
                     return;
             }
-            immediate = getImmediateSB(instruction);
+            immediate = (int) getImmediateSB(instruction);
             break;
-        case 0x67: // I type, signed imm
+        case 0x67: // I type
             opType = i;
             switch (funct3) {
                 case 0x0:
@@ -250,16 +250,16 @@ void postInstruction(unsigned int instruction) {
                     printf("Unknown jal instruction: %x\n", instruction);
                     return;
             }
-            immediate = getImmediateI(instruction);
+            immediate = (int) getImmediateI(instruction);
             break;
-        case 0x6F: // UJ type, signed imm
+        case 0x6F: // UJ type
             opType = uj;
             operation = "jalr";
-            immediate = getImmediateUJ(instruction);
+            immediate = (int) getImmediateUJ(instruction);
             break;
-        case 0x73: // I type, signed imm
+        case 0x73: // I type
             opType = i;
-            immediate = getImmediateI(instruction);
+            immediate = (int) getImmediateI(instruction);
             if (funct3 == 0x0) {
                 case 0x0:
                     if (immediate == 0x1) operation = "ebreak";
@@ -280,8 +280,7 @@ void postInstruction(unsigned int instruction) {
     }
     switch (opType) {
         case i:
-            if (uImm) printf("%s %s, %s, %d\t(0x%x)\n", operation, registerNames[dr], registerNames[sr1], uImmediate, uImmediate);
-            else printf("%s %s, %s, %d\t(0x%x)\n", operation, registerNames[dr], registerNames[sr1], immediate, immediate);
+            printf("%s %s, %s, %d\t(0x%x)\n", operation, registerNames[dr], registerNames[sr1], immediate, immediate);
             break;
         case u:
             printf("%s %s, %d\t(0x%x)\n", operation, registerNames[dr], immediate, immediate);
@@ -298,5 +297,7 @@ void postInstruction(unsigned int instruction) {
         case uj:
             printf("%s %s, %d\t(0x%x)\n", operation, registerNames[dr], immediate, immediate);
             break;
+        default:
+            printf("No.\n");
     }
 }

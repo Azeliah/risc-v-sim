@@ -4,6 +4,7 @@ void generateImmediate(ImmediateModule *immediateModule) {
     immediateModule->output = 0;
     unsigned int instruction = *immediateModule->input;
     unsigned int opcode = instruction & 0x7F;
+    unsigned int funct3 = (instruction >> 12) & 0x7;
     switch (opcode) {
         case 0x03:
         case 0x0F:
@@ -11,7 +12,11 @@ void generateImmediate(ImmediateModule *immediateModule) {
         case 0x67:
         case 0x73:
             // I-type: [31:20] => [11:0]
-            immediateModule->output = getImmediateI(instruction);
+            if (funct3 == 0x5) {
+                immediateModule->output = getImmediateIShift(instruction);
+            } else {
+                immediateModule->output = getImmediateI(instruction);
+            }
             break;
         case 0x17:
         case 0x37:

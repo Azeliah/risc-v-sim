@@ -18,6 +18,7 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->programCounter = 0;
     simulator->pcIncrement = 4;
     simulator->postInstruction = 1;
+    simulator->simulatorStatus = running;
 
     // Linking components
     simulator->processor->decoder->instructionInput = &simulator->instruction;
@@ -131,7 +132,6 @@ void runCycle(Simulator *simulator) {
     doOperation(simulator->processor->alu);
 
     // Access memory to read or write
-    // FIXME: Set up option for byte, halfWord and word data types.
     if (simulator->processor->control->memRead) {
         loadData(simulator->memory, simulator->processor->alu->output);
     }

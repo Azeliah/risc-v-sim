@@ -11,6 +11,7 @@ typedef struct AluControl {
     unsigned int *func3; // From decoder
     unsigned int *bit30; // From decoder
     unsigned int *branch; // From control
+    unsigned int *immediate; // From control
     enum aluCtrlToAluSignal output;
 } AluControl;
 

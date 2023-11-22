@@ -18,36 +18,36 @@ unsigned int signExtend(unsigned int num, int mostSignificant) {
     } else return num;
 }
 
-unsigned int getUImmediateI(unsigned int instruction) {
-    return ((instruction >> 20) & 0xFFF);
+unsigned int getImmediateI(unsigned int instruction) {
+    return signExtend(((instruction >> 20) & 0xFFF), 11);
 }
 
-int getImmediateI(unsigned int instruction) {
-    return (int) signExtend(((instruction >> 20) & 0xFFF), 11);
+unsigned int getImmediateIShift(unsigned int instruction) {
+    return signExtend(((instruction >> 20) &0x1F), 4);
 }
 
-int getImmediateU(unsigned int instruction) {
-    return (int) (instruction & 0xFFFFF000);
+unsigned int getImmediateU(unsigned int instruction) {
+    return (instruction & 0xFFFFF000);
 }
 
-int getImmediateS(unsigned int instruction) {
-    return (int) signExtend(((instruction >> 20) & 0xFE0) +
+unsigned int getImmediateS(unsigned int instruction) {
+    return signExtend(((instruction >> 20) & 0xFE0) +
                             ((instruction >> 7) & 0x1F),
                             11);
 }
 
-int getImmediateSB(unsigned int instruction) {
-    return (int) signExtend(((instruction >> 19) & 0x1000) +
+unsigned int getImmediateSB(unsigned int instruction) {
+    return signExtend(((instruction >> 19) & 0x1000) +
                       ((instruction >> 20) & 0xFE0) +
                       ((instruction >> 7) & 0x1E) +
                       ((instruction << 4) & 0x800),
-                      12);;
+                      12);
 }
 
-int getImmediateUJ(unsigned int instruction) {
-    return (int) signExtend(((instruction >> 11) & 0x100000) +
+unsigned int getImmediateUJ(unsigned int instruction) {
+    return signExtend(((instruction >> 11) & 0x100000) +
                             ((instruction >> 20) & 0x7FE) +
                             ((instruction >> 9) & 0x800) +
                             (instruction & 0xFF000),
-                            20);;
+                            20);
 }
