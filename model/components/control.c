@@ -8,6 +8,7 @@ void updateControlSignals(Control *control) {
     control->aluSource = 0;
     control->aluOp = 0; // 0b00(0) when add, 0b01(1) when subtract, 0b10(2) when func3/7 decides
     control->registerWrite = 0;
+    control->jalr = 0;
     control->ecall = 0;
 
     switch (*control->input) {
@@ -48,6 +49,7 @@ void updateControlSignals(Control *control) {
             control->aluSource = 1;
             control->branch = 1;
             control->registerWrite = 1;
+            control->jalr = 1;
             // FIXME
             break;
         case 0x6F: // Jump and link

@@ -19,6 +19,7 @@ typedef struct Simulator {
     Memory *memory;
     Multiplexer *memoryMux;
     Multiplexer *pcMux;
+    Multiplexer *jalrMux;
     Adder *pcAdd4;
     Adder *pcAddImm;
     unsigned int *ecallSignal;

@@ -12,6 +12,7 @@ typedef struct Control {
     unsigned int memWrite;
     unsigned int aluSource;
     unsigned int registerWrite;
+    unsigned int jalr;
     unsigned int ecall;
 } Control;
 
