@@ -3,8 +3,12 @@
 void initialize(Simulator *simulator, int memorySize) {
     simulator->memory = malloc(sizeof(Memory));
     simulator->memory->startAddress = malloc(memorySize);
+    for (int i = 0; i < memorySize; ++i) {
+        simulator->memory->startAddress[i] = 0;
+    }
     simulator->processor = malloc(sizeof(Processor));
     simulator->memoryMux = malloc(sizeof(Multiplexer));
+    simulator->jalrMux = malloc(sizeof(Multiplexer));
     simulator->pcMux = malloc(sizeof(Multiplexer));
     simulator->pcAdd4 = malloc(sizeof(Adder));
     simulator->pcAddImm = malloc(sizeof(Adder));
@@ -14,13 +18,22 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->memory->size = memorySize;
     simulator->programCounter = 0;
     simulator->pcIncrement = 4;
+    simulator->postInstruction = 1;
+    simulator->simulatorStatus = running;
 
     // Linking components
     simulator->processor->decoder->instructionInput = &simulator->instruction;
 
+    simulator->ecallSignal = &simulator->processor->control->ecall;
+    simulator->ecallType = &simulator->processor->registerModule->registers[17].data;
+
     simulator->pcMux->signal = &simulator->processor->alu->branchSignal;
     simulator->pcMux->input1 = &simulator->pcAdd4->output;
     simulator->pcMux->input2 = &simulator->pcAddImm->output;
+
+    simulator->jalrMux->input1 = &simulator->pcMux->output;
+    simulator->jalrMux->input2 = &simulator->processor->alu->output;
+    simulator->jalrMux->signal = &simulator->processor->control->jalr;
 
     simulator->memoryMux->input1 = &simulator->processor->alu->output;
     simulator->memoryMux->input2 = &simulator->memory->memOutRegister.data;
@@ -43,6 +56,7 @@ void tearDown(Simulator *simulator) {
     free(simulator->memory->startAddress);
     free(simulator->memory);
     free(simulator->memoryMux);
+    free(simulator->jalrMux);
     free(simulator->pcMux);
     free(simulator->pcAdd4);
     free(simulator->pcAddImm);
@@ -51,13 +65,18 @@ void tearDown(Simulator *simulator) {
 }
 
 void reset(Simulator *simulator) {
-    // Re-allocate memory
-    free(simulator->memory->startAddress);
-    simulator->memory->startAddress = malloc(simulator->memory->size);
+    // Reset memory
+    for (int i = 0; i < simulator->memory->size; ++i) {
+        simulator->memory->startAddress[i] = 0;
+    }
 
+    // Reset registers
     for (int i = 0; i < 32; ++i) {
         simulator->processor->registerModule->registers[i].data = 0; // Set registers to 0;
     }
+
+    simulator->programCounter = 0;
+    simulator->simulatorStatus = running;
 }
 
 void loadProgram(Simulator *simulator, char *path) {
@@ -80,8 +99,8 @@ void loadProgram(Simulator *simulator, char *path) {
  * The run command simply continues execution until runCycle() returns a 0 value.
  */
 void run(Simulator *simulator) {
-    while (runCycle(simulator)) {
-
+    while (simulator->simulatorStatus == running) {
+        runCycle(simulator);
     }
 }
 
@@ -94,10 +113,17 @@ void run(Simulator *simulator) {
  * * Do necessary memory access - read or write.
  * * Write back from memory to the destination register (x0, if not otherwise specified).
  */
-unsigned int runCycle(Simulator *simulator) {
-    // Fetch instruction - conversion to Big-Endian happens in bytesToUInt()
-    simulator->instruction = bytesToUInt(&simulator->memory->startAddress[simulator->programCounter]);
+void runCycle(Simulator *simulator) {
+    // Fetch instruction
+    simulator->instruction = fetchInstruction(simulator->memory, simulator->programCounter);
 
+    if (simulator->postInstruction) {
+        printf("Line 0x%x: ", simulator->programCounter);
+        postInstruction(simulator->instruction);
+    }
+    if (simulator->instruction == 0) {
+        simulator->simulatorStatus = zeroInstruction;
+    }
     // Decode instruction
     decodeInstruction(simulator->processor->decoder);
     generateImmediate(simulator->processor->immediateModule);
@@ -112,14 +138,11 @@ unsigned int runCycle(Simulator *simulator) {
     doOperation(simulator->processor->alu);
 
     // Access memory to read or write
-    // FIXME: Set up option for byte, halfWord and word data types.
     if (simulator->processor->control->memRead) {
-        simulator->memory->memOutRegister.data = bytesToUInt(
-                &simulator->memory->startAddress[simulator->processor->alu->output]);
+        loadData(simulator->memory, simulator->processor->alu->output);
     }
     if (simulator->processor->control->memWrite) {
-        uIntToBytes(simulator->processor->registerModule->output2,
-                    &simulator->memory->startAddress[simulator->processor->alu->output]);
+        saveData(simulator->memory, simulator->processor->alu->output);
     }
 
     // Write to registers
@@ -130,7 +153,7 @@ unsigned int runCycle(Simulator *simulator) {
     executeAdder(simulator->pcAdd4);
     executeAdder(simulator->pcAddImm);
     selectOutput(simulator->pcMux);
-    simulator->programCounter = simulator->pcMux->output;
-
-    return simulator->instruction;
+    selectOutput(simulator->jalrMux);
+    simulator->programCounter = simulator->jalrMux->output;
+    if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
 }

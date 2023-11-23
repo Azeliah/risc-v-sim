@@ -18,7 +18,7 @@ void doOperation(Alu *alu) {
         case xor:
             logicalXor(alu);
             break;
-        case sl:
+        case sll:
             shiftLeft(alu);
             break;
         case srl:

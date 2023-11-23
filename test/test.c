@@ -72,6 +72,7 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
 }
 
 int runTest(Simulator *simulator, char *testPath) {
+    printf("\nTest: %s\n", testPath);
     // Load program into simulator and run it
     loadProgram(simulator, testPath);
     run(simulator);

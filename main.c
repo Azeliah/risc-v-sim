@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
     Simulator *simulator = malloc(sizeof(Simulator));
-    initialize(simulator, 0x100000);
+    initialize(simulator, 0x800000);
 
     int test = 0;
     if (argc == 2) if (argv[1][0] == 't') test = 1;
@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
         else fp = "../test/task1/addlarge.bin";
 
         loadProgram(simulator, fp);
+        run(simulator);
         printRegisters(simulator->processor->registerModule->registers);
     }
     tearDown(simulator);
