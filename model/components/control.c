@@ -47,16 +47,13 @@ void updateControlSignals(Control *control) {
             break;
         case 0x67: // Jump and link register
             control->aluSource = 1;
-            control->branch = 1;
             control->registerWrite = 1;
             control->jalr = 1;
-            // FIXME
             break;
         case 0x6F: // Jump and link
             control->aluSource = 1;
             control->branch = 1;
             control->registerWrite = 1;
-            // FIXME
             break;
         case 0x73: // ecall, ebreak and CSRR.
             control->ecall = 1;
