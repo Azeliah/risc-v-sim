@@ -1,6 +1,8 @@
 #ifndef RISC_V_SIM_CONVERSIONHELPER_H
 #define RISC_V_SIM_CONVERSIONHELPER_H
 
+unsigned int toLittleEndian(unsigned int num);
+
 unsigned int signExtend(unsigned int num, int mostSignificant);
 
 unsigned int getImmediateI(unsigned int instruction);

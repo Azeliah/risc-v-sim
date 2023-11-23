@@ -9,7 +9,12 @@ void generateImmediate(ImmediateModule *immediateModule) {
         case 0x03:
         case 0x0F:
         case 0x13:
+            // I-type: [31:20] => [11:0]
+            immediateModule->output = getImmediateI(instruction);
+            break;
         case 0x67:
+            // I-type: [31:20] => [12:1]
+            immediateModule->output = getImmediateI(instruction) & 0xFFFFFFFE;
         case 0x73:
             // I-type: [31:20] => [11:0]
             if (funct3 == 0x5) {
@@ -29,7 +34,6 @@ void generateImmediate(ImmediateModule *immediateModule) {
             break;
         case 0x63:
             // SB-type: [31] [7] [30:25] [11:8] => [12] [11] [10:5] [4:1]
-
             immediateModule->output = getImmediateSB(instruction);
             break;
         case 0x6F:

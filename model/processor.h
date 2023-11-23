@@ -16,6 +16,7 @@ typedef struct Processor {
     AluControl *aluControl;
     Alu *alu;
     Multiplexer *aluMux;
+    Multiplexer *regWriteMux;
     ImmediateModule *immediateModule;
     Decoder *decoder;
 } Processor;

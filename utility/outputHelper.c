@@ -244,36 +244,34 @@ void postInstruction(unsigned int instruction) {
             opType = i;
             switch (funct3) {
                 case 0x0:
-                    operation = "jal";
+                    operation = "jalr";
                     break;
                 default:
-                    printf("Unknown jal instruction: %x\n", instruction);
+                    printf("Unknown jalr instruction: %x\n", instruction);
                     return;
             }
             immediate = (int) getImmediateI(instruction);
             break;
         case 0x6F: // UJ type
             opType = uj;
-            operation = "jalr";
+            operation = "jal";
             immediate = (int) getImmediateUJ(instruction);
             break;
         case 0x73: // I type
             opType = i;
             immediate = (int) getImmediateI(instruction);
             if (funct3 == 0x0) {
-                case 0x0:
-                    if (immediate == 0x1) operation = "ebreak";
-                    else if (immediate == 0x0) operation = "ecall";
-                    else {
-                        printf("Unknown system call instruction: %x\n", instruction);
-                        return;
-                    }
+                if (immediate == 0x1) operation = "ebreak";
+                else if (immediate == 0x0) operation = "ecall";
+                else {
+                    printf("Unknown system call instruction: %x\n", instruction);
+                    return;
+                }
                 break;
             } else {
                 printf("Unknown CSRR instruction: %x\n", instruction);
                 return;
             }
-            break;
         default:
             printf("Unknown instruction: %x\n", instruction);
             return;

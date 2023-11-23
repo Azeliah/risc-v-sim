@@ -11,6 +11,8 @@ void initializeProcessor(Processor *processor) {
     processor->aluControl = malloc(sizeof(AluControl));
     processor->alu = malloc(sizeof(Alu));
     processor->aluMux = malloc(sizeof(Multiplexer));
+    processor->jalMux = malloc(sizeof(Multiplexer));
+    processor->regWriteMux = malloc(sizeof(Multiplexer));
     processor->decoder = malloc(sizeof(Decoder));
     processor->immediateModule = malloc(sizeof(ImmediateModule));
 
@@ -20,6 +22,7 @@ void initializeProcessor(Processor *processor) {
     processor->registerModule->register2 = &processor->decoder->r2Address;
     processor->registerModule->writeSignal = &processor->control->registerWrite;
     processor->registerModule->writeRegister = &processor->decoder->rwAddress;
+    processor->registerModule->writeValue = &processor->regWriteMux->output;
 
     // Control
     processor->control->input = &processor->decoder->opcode;
@@ -40,6 +43,10 @@ void initializeProcessor(Processor *processor) {
     processor->aluMux->input1 = &processor->registerModule->output2;
     processor->aluMux->input2 = &processor->immediateModule->output;
     processor->aluMux->signal = &processor->control->aluSource;
+
+    // RegWriteMux
+    processor->regWriteMux->signal = &processor->control->jal;
+
 
     // ImmediateModule
     processor->immediateModule->input = &processor->decoder->immediateBits;

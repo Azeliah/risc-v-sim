@@ -45,7 +45,8 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->pcAdd4->input1 = &simulator->programCounter;
     simulator->pcAdd4->input2 = &simulator->pcIncrement;
 
-    simulator->processor->registerModule->writeValue = &simulator->memoryMux->output;
+    simulator->processor->regWriteMux->input1 = &simulator->memoryMux->output;
+    simulator->processor->regWriteMux->input2 = &simulator->pcAdd4->output;
 
     simulator->memory->writeData = &simulator->processor->registerModule->output2;
     simulator->memory->writeSignal = &simulator->processor->control->memWrite;
@@ -93,6 +94,13 @@ void loadProgram(Simulator *simulator, char *path) {
         else simulator->memory->startAddress[i] = (unsigned char) c;
     }
     fclose(fp);
+    printf("Current program path: %s\n", path);
+    for (int i = 0; i < size; i = i + 4) {
+        unsigned int instruction = fetchInstruction(simulator->memory, i);
+        printf("0x%x\t", i);
+        postInstruction(instruction);
+    }
+    printf("End of program.\n\n");
 }
 
 /*
@@ -147,12 +155,15 @@ void runCycle(Simulator *simulator) {
 
     // Write to registers
     selectOutput(simulator->memoryMux);
+    selectOutput(simulator->processor->regWriteMux);
     writeToRegister(simulator->processor->registerModule);
 
     // Update program counter
     executeAdder(simulator->pcAdd4);
     executeAdder(simulator->pcAddImm);
     selectOutput(simulator->pcMux);
+    simulator->programCounter = simulator->pcMux->output;
+    executeAdder(simulator->pcAdd4);
     selectOutput(simulator->jalrMux);
     simulator->programCounter = simulator->jalrMux->output;
     if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
