@@ -18,7 +18,7 @@ void loadData(Memory *memory, unsigned int address) {
         case 0x1: // Load half-word
             memory->memOutRegister.data =
                     signExtend((unsigned int) memory->startAddress[address] +
-                               (((unsigned int) memory->startAddress[address]) << 8),
+                               (((unsigned int) memory->startAddress[address + 1]) << 8),
                                15);
             break;
         case 0x2: // Load word
@@ -29,7 +29,7 @@ void loadData(Memory *memory, unsigned int address) {
             break;
         case 0x5: // Load half-word unsigned
             memory->memOutRegister.data = (unsigned int) memory->startAddress[address] +
-                                          (((unsigned int) memory->startAddress[address]) << 8);
+                                          (((unsigned int) memory->startAddress[address + 1]) << 8);
             break;
         default:
             printf("Invalid load funct3.\n");

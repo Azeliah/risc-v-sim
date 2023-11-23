@@ -18,7 +18,7 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->memory->size = memorySize;
     simulator->programCounter = 0;
     simulator->pcIncrement = 4;
-    simulator->postInstruction = 1;
+    simulator->postInstruction = 0;
     simulator->simulatorStatus = running;
 
     // Linking components
@@ -94,13 +94,15 @@ void loadProgram(Simulator *simulator, char *path) {
         else simulator->memory->startAddress[i] = (unsigned char) c;
     }
     fclose(fp);
-    printf("Current program path: %s\n", path);
-    for (int i = 0; i < size; i = i + 4) {
-        unsigned int instruction = fetchInstruction(simulator->memory, i);
-        printf("0x%x\t", i);
-        postInstruction(instruction);
+    if (simulator->postInstruction) {
+        printf("Current program path: %s\n", path);
+        for (int i = 0; i < size; i = i + 4) {
+            unsigned int instruction = fetchInstruction(simulator->memory, i);
+            printf("0x%x\t", i);
+            postInstruction(instruction);
+        }
+        printf("End of program text.\n\n");
     }
-    printf("End of program.\n\n");
 }
 
 /*

@@ -18,4 +18,5 @@ add_executable(risc_v_sim
         utility/conversionHelper.c utility/conversionHelper.h
         model/components/registerModule.c model/components/registerModule.h
         model/components/multiplexer.c model/components/multiplexer.h
-        model/components/immediateModule.c model/components/immediateModule.h model/components/adder.c model/components/adder.h)
+        model/components/immediateModule.c model/components/immediateModule.h
+        model/components/adder.c model/components/adder.h)

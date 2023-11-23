@@ -88,7 +88,7 @@ void shiftRightArithmetic(Alu *alu) {
         if (*alu->input2 > 31) {
             alu->output = 0xFFFFFFFF;
         } else {
-            unsigned int bitsRemaining = 32 - *alu->input2;
+            unsigned int bitsRemaining = 32 - ((int) *alu->input2);
             alu->output = (*alu->input1 >> *alu->input2) + (0xFFFFFFFF << bitsRemaining);
         }
     } else {

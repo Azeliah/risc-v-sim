@@ -11,7 +11,6 @@ void initializeProcessor(Processor *processor) {
     processor->aluControl = malloc(sizeof(AluControl));
     processor->alu = malloc(sizeof(Alu));
     processor->aluMux = malloc(sizeof(Multiplexer));
-    processor->jalMux = malloc(sizeof(Multiplexer));
     processor->regWriteMux = malloc(sizeof(Multiplexer));
     processor->decoder = malloc(sizeof(Decoder));
     processor->immediateModule = malloc(sizeof(ImmediateModule));

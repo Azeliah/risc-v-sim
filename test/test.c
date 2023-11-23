@@ -72,7 +72,6 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
 }
 
 int runTest(Simulator *simulator, char *testPath) {
-    printf("\nTest: %s\n", testPath);
     // Load program into simulator and run it
     loadProgram(simulator, testPath);
     run(simulator);
@@ -86,13 +85,14 @@ int runTest(Simulator *simulator, char *testPath) {
 
     int testResult = 1;
     for (int i = 0; i < 32; ++i) {
-        printf("Register x%d: 0x%x\t\t0x%x\n", i, toLittleEndian(simulator->processor->registerModule->registers[i].data), expectedResult[i]);
         if (toLittleEndian(simulator->processor->registerModule->registers[i].data) != expectedResult[i]) {
             testResult = 0;
             break; // If a result does not match, the test has already failed
             // TODO: Create meaningful logging message.
         }
     }
+    if (testResult) printf("Path: %s, test succeeded.\n", testPath);
+    else printf("Path: %s, test failed.\n", testPath);
     reset(simulator); // Test has concluded and the simulator is reset
     free(expectedResult);
     return testResult;

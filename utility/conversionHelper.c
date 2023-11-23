@@ -16,7 +16,7 @@ unsigned int getImmediateI(unsigned int instruction) {
 }
 
 unsigned int getImmediateIShift(unsigned int instruction) {
-    return signExtend(((instruction >> 20) & 0x1F), 4);
+    return ((instruction >> 20) & 0x1F);
 }
 
 unsigned int getImmediateU(unsigned int instruction) {
@@ -30,10 +30,10 @@ unsigned int getImmediateS(unsigned int instruction) {
 }
 
 unsigned int getImmediateSB(unsigned int instruction) {
-    return signExtend(((instruction >> 19) & 0x1000) +
-                      ((instruction >> 20) & 0xFE0) +
-                      ((instruction >> 7) & 0x1E) +
-                      ((instruction << 4) & 0x800),
+    return signExtend(((instruction & 0x80000000) >> 19) +
+                      ((instruction & 0x7E000000) >> 20) +
+                      ((instruction & 0xF00) >> 7) +
+                      ((instruction & 0x80) << 4),
                       12);
 }
 

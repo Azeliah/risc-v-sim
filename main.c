@@ -30,12 +30,13 @@ int main(int argc, char **argv) {
          */
         char *fp;
         if (argc > 2) fp = argv[1];
-        else fp = "../test/task1/addlarge.bin";
+        else fp = "../test/task4/t14.bin";
 
         loadProgram(simulator, fp);
         run(simulator);
         printRegisters(simulator->processor->registerModule->registers);
     }
+
     tearDown(simulator);
     free(simulator);
     return 0;

@@ -98,10 +98,10 @@ void postInstruction(unsigned int instruction) {
                     operation = "lw";
                     break;
                 case 0x4:
-                    operation = "lhu";
+                    operation = "lbu";
                     break;
                 case 0x5:
-                    operation = "lbu";
+                    operation = "lhu";
                     break;
                 default:
                     printf("Unknown load instruction: %x\n", instruction);
