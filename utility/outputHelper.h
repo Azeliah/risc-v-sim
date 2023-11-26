@@ -8,7 +8,9 @@
 #include "../model/memory.h"
 #include "conversionHelper.h"
 
-void printRegisters(Register *registers);
+void printRegistersConvention(Register *registers);
+
+void printRegistersAssessment(Register *registers);
 
 char *toBinary(unsigned int num);
 

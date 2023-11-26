@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
         loadProgram(simulator, fp);
         run(simulator);
-        printRegisters(simulator->processor->registerModule->registers);
+        printRegistersAssessment(simulator->processor->registerModule->registers);
     }
 
     tearDown(simulator);

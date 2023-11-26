@@ -1,6 +1,6 @@
 #include "outputHelper.h"
 
-void printRegisters(Register *registers) {
+void printRegistersConvention(Register *registers) {
     char *registerNames[] = {"zero", "ra", "sp", "gp", "tp", "t0", "t1",
                              "t2", "s0/fp", "s1", "a0", "a1", "a2", "a3",
                              "a4", "a5", "a6", "a7", "s2", "s3", "s4",
@@ -9,6 +9,15 @@ void printRegisters(Register *registers) {
     printf("Register\tName\t\tDecimal\t\tHexadecimal\n");
     for (int i = 0; i < 32; ++i) {
         printf("x%i\t\t%s\t\t%i\t\t0x%x\n", i, registerNames[i], (registers + i)->data, (registers + i)->data);
+    }
+}
+
+void printRegistersAssessment(Register *registers) {
+    for (int i = 0; i < 32; ++i) {
+        printf("x%d = %#010x", i, registers[i].data);
+        if (i == 31) break;
+        else printf(",\t");
+        if ((i + 1) % 4 == 0) printf("\n");
     }
 }
 
