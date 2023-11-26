@@ -12,16 +12,6 @@ void printRegistersConvention(Register *registers);
 
 void printRegistersAssessment(Register *registers);
 
-char *toBinary(unsigned int num);
-
-void printMemoryData(unsigned int num);
-
-void printMemoryDataBytesReversed(unsigned int num);
-
-void printMemory(Memory *memory);
-
-void printMemoryBytesReversed(Memory *memory);
-
 void postInstruction(unsigned int instruction);
 
 #endif //RISC_V_SIM_OUTPUTHELPER_H
