@@ -43,4 +43,6 @@ void run(Simulator *simulator);
 
 void runCycle(Simulator *simulator);
 
+void handleEcall(Simulator *simulator);
+
 #endif //RISC_V_SIM_SIMULATOR_H

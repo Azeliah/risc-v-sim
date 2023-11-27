@@ -168,5 +168,15 @@ void runCycle(Simulator *simulator) {
     executeAdder(simulator->pcAdd4);
     selectOutput(simulator->jalrMux);
     simulator->programCounter = simulator->jalrMux->output;
-    if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
+    if (*simulator->ecallSignal) handleEcall(simulator);
+}
+
+void handleEcall(Simulator *simulator) {
+    switch (simulator->processor->registerModule->registers[17].data) {
+        case 10:
+            simulator->simulatorStatus = ecallExit;
+            break;
+        default:
+            simulator->simulatorStatus = ecallExit;
+    }
 }
