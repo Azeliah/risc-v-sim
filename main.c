@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
         free(resultArray);
     } else {
         char *fp;
-        if (argc > 2) fp = argv[1];
+        if (argc >= 2) fp = argv[1];
         else {
             fp = "../demo.o";
             simulator->programCounter = 0x34;
@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
         loadProgram(simulator, fp);
         run(simulator);
         printRegistersAssessment(simulator->processor->registerModule->registers);
+        outputRegisterToFile(simulator->processor->registerModule->registers, fp);
     }
 
     tearDown(simulator);

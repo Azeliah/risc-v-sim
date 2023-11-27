@@ -1,3 +1,4 @@
+#include <string.h>
 #include "outputHelper.h"
 
 void printRegistersConvention(Register *registers) {
@@ -14,10 +15,25 @@ void printRegistersConvention(Register *registers) {
 
 void printRegistersAssessment(Register *registers) {
     for (int i = 0; i < 32; ++i) {
-        printf("x%d = %#010x", i, registers[i].data);
+        printf("x%d = 0x%08x", i, toLittleEndian(registers[i].data));
         if (i == 31) break;
         else printf(",\t");
         if ((i + 1) % 4 == 0) printf("\n");
+    }
+}
+
+void outputRegisterToFile(Register *registers, char *filename){
+    char newFilename[100];
+    strcpy(newFilename, filename);
+    int strLength =(int) strlen(newFilename);
+    for(int i = strLength; i > strLength - 5; i--){
+        newFilename[i] = '\0';
+    }
+    strcat(newFilename, "Result.res");
+    FILE *file = fopen(newFilename, "wb");
+    for(int reg = 0; reg < 32; reg++){
+        unsigned int writeValue = registers[reg].data;
+        fwrite(&writeValue, sizeof(unsigned int), 1, file);
     }
 }
 

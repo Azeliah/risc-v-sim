@@ -20,8 +20,7 @@ int *runTestSuite(Simulator *simulator) {
         char *newPath = malloc(strlen(testDirectory) + strlen(newDirectory->d_name) + 2);
         sprintf(newPath, "%s/%s", testDirectory, newDirectory->d_name);
         int isDirectory = 1;
-        for (int i = (int) strlen(testDirectory) + 1;
-             newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
+        for (int i = (int) strlen(testDirectory) + 1; newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
             if (newPath[i] == '.') {
                 free(newPath);
                 isDirectory = 0;
@@ -54,8 +53,7 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
         char *newPath = malloc(strlen(directory) + strlen(newFile->d_name) + 2);
         sprintf(newPath, "%s/%s", directory, newFile->d_name);
         int isTestFile = 0;
-        for (int i = (int) strlen(directory) + 1;
-             newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
+        for (int i = (int) strlen(directory) + 1; newPath[i] != '\0'; ++i) { // Assuming no dots in directory names.
             if (newPath[i] == '.') {
                 if (newPath[i + 1] == 'b') {
                     isTestFile = 1;

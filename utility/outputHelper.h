@@ -12,6 +12,8 @@ void printRegistersConvention(Register *registers);
 
 void printRegistersAssessment(Register *registers);
 
+void outputRegisterToFile(Register *registers, char *filename);
+
 void postInstruction(unsigned int instruction);
 
 #endif //RISC_V_SIM_OUTPUTHELPER_H
