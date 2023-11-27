@@ -2,6 +2,7 @@
 #define RISC_V_SIM_DECODER_H
 
 #include <stdio.h>
+
 /*
 enum opCodeSignal {
     lui, auipc, jal, jalr, beq, bne, blt, bge, bltu, bgeu, lb, lh, lw, lbu, lhu, sb, sh, sw,

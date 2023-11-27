@@ -2,7 +2,8 @@
 #include "aluControl.h"
 
 void updateAluControlSignal(AluControl *aluControl) {
-    unsigned int func3_and_7 = (*aluControl->func3) + ((*aluControl->bit30)<<3); // bit 30 as 3rd bit, and func3 as bit 0,1 and 2
+    unsigned int func3_and_7 =
+            (*aluControl->func3) + ((*aluControl->bit30) << 3); // bit 30 as 3rd bit, and func3 as bit 0,1 and 2
     switch (*aluControl->opType) {
         case 0b00: // case opType = add
             aluControl->output = add;
@@ -94,7 +95,7 @@ void updateAluControlSignal(AluControl *aluControl) {
                     aluControl->output = sll;
                     break;
                 case 0b101:
-                    if(*aluControl->bit30) aluControl->output = sra;
+                    if (*aluControl->bit30) aluControl->output = sra;
                     else aluControl->output = srl;
                     break;
                 case 0b010:
@@ -110,5 +111,4 @@ void updateAluControlSignal(AluControl *aluControl) {
         default:
             break;
     }
-    // TODO: Bits to enum
 }
