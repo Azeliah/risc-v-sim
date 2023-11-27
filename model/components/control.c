@@ -6,7 +6,7 @@ void updateControlSignals(Control *control) {
     control->memToReg = 0;
     control->branch = 0;
     control->aluSource = 0;
-    control->aluOp = 0; // 0b00(0) when add, 0b01(1) when subtract, 0b10(2) when func3/7 decides
+    control->aluOp = 0; // 0b00(0) when add, 0b01(1) when subtract, 0b10(2) when funct3/7 decides
     control->registerWrite = 0;
     control->jal = 0;
     control->jalr = 0;

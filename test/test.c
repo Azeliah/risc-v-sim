@@ -14,7 +14,7 @@ int *runTestSuite(Simulator *simulator) {
     }
 
     struct dirent *newDirectory;
-
+    // Go through the present test directories and run the tests in each directory
     while ((newDirectory = readdir(dir))) {
         if (!strcmp(newDirectory->d_name, ".") || !strcmp(newDirectory->d_name, "..")) continue;
         char *newPath = malloc(strlen(testDirectory) + strlen(newDirectory->d_name) + 2);
@@ -47,6 +47,7 @@ void runTestGroup(Simulator *simulator, int *resultArray, char *directory) {
         return;
     }
 
+    // locate each test file, then run the test.
     struct dirent *newFile;
     while ((newFile = readdir(dir))) {
         if (!strcmp(newFile->d_name, ".") || !strcmp(newFile->d_name, "..")) continue;
@@ -88,7 +89,6 @@ int runTest(Simulator *simulator, char *testPath) {
         if (toLittleEndian(simulator->processor->registerModule->registers[i].data) != expectedResult[i]) {
             testResult = 0;
             break; // If a result does not match, the test has already failed
-            // TODO: Create meaningful logging message.
         }
     }
     if (testResult) printf("Path: %s, test succeeded.\n", testPath);
@@ -106,7 +106,7 @@ unsigned int *getExpectedTestResult(char *path) { // For comparing the 32 regist
     fseek(fp, 0L, SEEK_END);
     int size = ftell(fp);
     rewind(fp);
-    if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
+    if (fp == NULL) { exit(2); }
     for (int i = 0; i < size; ++i) {
         c = (char) fgetc(fp);
         if (c < 0) bytes[i] = (unsigned char) 256 + c;

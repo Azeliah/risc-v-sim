@@ -2,8 +2,8 @@
 #include "aluControl.h"
 
 void updateAluControlSignal(AluControl *aluControl) {
-    unsigned int func3_and_7 =
-            (*aluControl->func3) + ((*aluControl->bit30) << 3); // bit 30 as 3rd bit, and func3 as bit 0,1 and 2
+    unsigned int funct3_and_7 =
+            (*aluControl->funct3) + ((*aluControl->bit30) << 3); // bit 30 as 3rd bit, and funct3 as bit 0,1 and 2
     switch (*aluControl->opType) {
         case 0b00: // case opType = add
             aluControl->output = add;
@@ -14,7 +14,7 @@ void updateAluControlSignal(AluControl *aluControl) {
         case 0b10: // case opType = func types
             switch (*aluControl->branch) {
                 case 0: // case not branching
-                    switch (func3_and_7) {
+                    switch (funct3_and_7) {
                         case 0b0000:
                             aluControl->output = add;
                             break;
@@ -46,12 +46,12 @@ void updateAluControlSignal(AluControl *aluControl) {
                             aluControl->output = sltu;
                             break;
                         default:
-                            printf("wrong func3/7???? should not be able to run");
+                            printf("wrong funct3/7???? should not be able to run");
                             break;
                     }
                     break;
                 case 1: // case branching
-                    switch (*aluControl->func3) {
+                    switch (*aluControl->funct3) {
                         case 0b000:
                             aluControl->output = beq;
                             break;
@@ -71,14 +71,14 @@ void updateAluControlSignal(AluControl *aluControl) {
                             aluControl->output = bgeu;
                             break;
                         default:
-                            printf("Unknown func3 in aluControl - should not be able to run -.-");
+                            printf("Unknown funct3 in aluControl - should not be able to run -.-");
                             break;
                     }
                     break;
             }
             break;
         case 0b11:
-            switch (*aluControl->func3) {
+            switch (*aluControl->funct3) {
                 case 0b000:
                     aluControl->output = add;
                     break;
@@ -105,7 +105,7 @@ void updateAluControlSignal(AluControl *aluControl) {
                     aluControl->output = sltu;
                     break;
                 default:
-                    printf("wrong func3/7???? should not be able to run");
+                    printf("wrong funct3/7???? should not be able to run");
                     break;
             }
         default:
