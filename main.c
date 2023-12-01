@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
         char *fp;
         if (argc >= 2) fp = argv[1];
         else {
-            fp = "../demo.o";
+            fp = "./demo.o";
             simulator->programCounter = 0x34;
         }
 

@@ -5,7 +5,7 @@ int *runTestSuite(Simulator *simulator) {
     resultArray[0] = 0;
     resultArray[1] = 0;
 
-    char *testDirectory = "../test";
+    char *testDirectory = "./test";
     DIR *dir = opendir(testDirectory);
 
     if (!dir) {
