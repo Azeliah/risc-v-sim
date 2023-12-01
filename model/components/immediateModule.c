@@ -7,7 +7,7 @@ void generateImmediate(ImmediateModule *immediateModule) {
     unsigned int funct3 = (instruction >> 12) & 0x7;
     switch (opcode) {
         case 0x13:
-            if (funct3 == 0x5) {
+            if (funct3 == 0x5) { // Bit shift instructions only have 5 immediate bits and a funct7
                 immediateModule->output = getImmediateIShift(instruction);
             } else {
                 immediateModule->output = getImmediateI(instruction);

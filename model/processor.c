@@ -28,7 +28,7 @@ void initializeProcessor(Processor *processor) {
 
     // AluControl
     processor->aluControl->opType = &processor->control->aluOp;
-    processor->aluControl->func3 = &processor->decoder->func3;
+    processor->aluControl->funct3 = &processor->decoder->funct3;
     processor->aluControl->bit30 = &processor->decoder->bit30;
     processor->aluControl->branch = &processor->control->branch;
 
@@ -46,10 +46,8 @@ void initializeProcessor(Processor *processor) {
     // RegWriteMux
     processor->regWriteMux->signal = &processor->control->jal;
 
-
     // ImmediateModule
     processor->immediateModule->input = &processor->decoder->immediateBits;
-
 }
 
 void tearDownProcessor(Processor *processor) {

@@ -9,7 +9,6 @@
 typedef struct Memory {
     unsigned int size;
     Register memOutRegister;
-    unsigned int *writeSignal;
     unsigned int *writeData;
     unsigned int *dataType;
     unsigned char *startAddress; // For byte addressable memory.
@@ -17,7 +16,7 @@ typedef struct Memory {
 
 unsigned int fetchInstruction(Memory *memory, unsigned int programCounter);
 
-void loadData (Memory *memory, unsigned int address);
+void loadData(Memory *memory, unsigned int address);
 
 void saveData(Memory *memory, unsigned int address);
 

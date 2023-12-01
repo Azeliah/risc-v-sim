@@ -8,17 +8,11 @@
 #include "../model/memory.h"
 #include "conversionHelper.h"
 
-void printRegisters(Register *registers);
+void printRegistersConvention(Register *registers);
 
-char *toBinary(unsigned int num);
+void printRegistersAssessment(Register *registers);
 
-void printMemoryData(unsigned int num);
-
-void printMemoryDataBytesReversed(unsigned int num);
-
-void printMemory(Memory *memory);
-
-void printMemoryBytesReversed(Memory *memory);
+void outputRegisterToFile(Register *registers, char *filename);
 
 void postInstruction(unsigned int instruction);
 

@@ -4,7 +4,7 @@ unsigned int fetchInstruction(Memory *memory, unsigned int programCounter) {
     unsigned char *firstByte = &memory->startAddress[programCounter];
     unsigned int instruction = 0;
     for (int i = 0; i < 4; ++i) {
-        instruction += ((unsigned int) firstByte[i] << i * 8);
+        instruction += ((unsigned int) firstByte[i] << i * 8); // Little-Endian to Big-Endian conversion
     }
     return instruction;
 }

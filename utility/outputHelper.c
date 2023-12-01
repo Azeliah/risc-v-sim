@@ -1,6 +1,7 @@
+#include <string.h>
 #include "outputHelper.h"
 
-void printRegisters(Register *registers) {
+void printRegistersConvention(Register *registers) {
     char *registerNames[] = {"zero", "ra", "sp", "gp", "tp", "t0", "t1",
                              "t2", "s0/fp", "s1", "a0", "a1", "a2", "a3",
                              "a4", "a5", "a6", "a7", "s2", "s3", "s4",
@@ -12,44 +13,27 @@ void printRegisters(Register *registers) {
     }
 }
 
-char *toBinary(unsigned int num) {
-    char *result = malloc(sizeof(char) * 36);
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            *(result + 9 * i + j) = (num << (8 * i + j)) & 0x80000000 ? '1' : '0';
-        }
-        *(result + 9 * (i + 1) - 1) = ' ';
-    }
-    *(result + 35) = '\0';
-    return result;
-}
-
-void printMemoryDataBytesReversed(unsigned int num) {
-    unsigned int reversed = ((num & 0xFF000000) >> 24) + ((num & 0x00FF0000) >> 8) +
-                            ((num & 0x0000FF00) << 8) + ((num & 0x000000FF) << 24);
-    char *binary = toBinary(reversed);
-    printf("Written to memory (reversed): 0x%x; Binary: %s\n", reversed, binary);
-    free(binary);
-}
-
-void printMemoryData(unsigned int num) {
-    char *binary = toBinary(num);
-    printf("Written to memory: 0x%x; Binary: %s\n", num, binary);
-    free(binary);
-}
-
-void printMemory(Memory *memory) { // If there exists a 0 in the program, this will terminate prematurely.
-    unsigned char *ptr = memory->startAddress;
-    while (*ptr) {
-        printMemoryData(*ptr++);
+void printRegistersAssessment(Register *registers) {
+    for (int i = 0; i < 32; ++i) {
+        printf("x%d = 0x%08x", i, toLittleEndian(registers[i].data));
+        if (i == 31) break;
+        else printf(",\t");
+        if ((i + 1) % 4 == 0) printf("\n");
     }
 }
 
-// FIXME: This entire file doesn't work properly after memory change from ints to chars.
-void printMemoryBytesReversed(Memory *memory) {
-    unsigned char *ptr = memory->startAddress;
-    while (*ptr) {
-        printMemoryDataBytesReversed(*ptr++);
+void outputRegisterToFile(Register *registers, char *filename){
+    char newFilename[100];
+    strcpy(newFilename, filename);
+    int strLength =(int) strlen(newFilename);
+    for(int i = strLength; i > strLength - 5; i--){
+        newFilename[i] = '\0';
+    }
+    strcat(newFilename, "Result.res");
+    FILE *file = fopen(newFilename, "wb");
+    for(int reg = 0; reg < 32; reg++){
+        unsigned int writeValue = registers[reg].data;
+        fwrite(&writeValue, sizeof(unsigned int), 1, file);
     }
 }
 
@@ -292,10 +276,8 @@ void postInstruction(unsigned int instruction) {
         case sb:
             printf("%s %s, %s, %d\t(0x%x)\n", operation, registerNames[sr1], registerNames[sr2], immediate, immediate);
             break;
-        case uj:
+        default: // uj type. Default used to fix annoying warning. Not reachable by anything other than uj.
             printf("%s %s, %d\t(0x%x)\n", operation, registerNames[dr], immediate, immediate);
             break;
-        default:
-            printf("No.\n");
     }
 }

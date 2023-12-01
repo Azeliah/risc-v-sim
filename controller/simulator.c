@@ -1,6 +1,7 @@
 #include "simulator.h"
 
 void initialize(Simulator *simulator, int memorySize) {
+    // Allocating memory for the simulator structures
     simulator->memory = malloc(sizeof(Memory));
     simulator->memory->startAddress = malloc(memorySize);
     for (int i = 0; i < memorySize; ++i) {
@@ -15,18 +16,29 @@ void initialize(Simulator *simulator, int memorySize) {
 
     initializeProcessor(simulator->processor);
 
+    // Setting up the simulator attributes
     simulator->memory->size = memorySize;
     simulator->programCounter = 0;
     simulator->pcIncrement = 4;
-    simulator->postInstruction = 0;
+    simulator->postInstruction = 0; // Set to 1 for debugging and/or outputs during simulation
     simulator->simulatorStatus = running;
 
     // Linking components
     simulator->processor->decoder->instructionInput = &simulator->instruction;
 
+    // Ecall signal and types
+    // TODO: Implement more ecalls - currently only supports terminating the program execution
     simulator->ecallSignal = &simulator->processor->control->ecall;
     simulator->ecallType = &simulator->processor->registerModule->registers[17].data;
 
+    // Adders for calculating values for programCounter
+    simulator->pcAddImm->input1 = &simulator->programCounter;
+    simulator->pcAddImm->input2 = &simulator->processor->immediateModule->output;
+
+    simulator->pcAdd4->input1 = &simulator->programCounter;
+    simulator->pcAdd4->input2 = &simulator->pcIncrement;
+
+    // Multiplexers for updating the programCounter
     simulator->pcMux->signal = &simulator->processor->alu->branchSignal;
     simulator->pcMux->input1 = &simulator->pcAdd4->output;
     simulator->pcMux->input2 = &simulator->pcAddImm->output;
@@ -35,22 +47,18 @@ void initialize(Simulator *simulator, int memorySize) {
     simulator->jalrMux->input2 = &simulator->processor->alu->output;
     simulator->jalrMux->signal = &simulator->processor->control->jalr;
 
+    // Multiplexer for selecting output from memory stage - ALU or memory register.
     simulator->memoryMux->input1 = &simulator->processor->alu->output;
     simulator->memoryMux->input2 = &simulator->memory->memOutRegister.data;
     simulator->memoryMux->signal = &simulator->processor->control->memToReg;
 
-    simulator->pcAddImm->input1 = &simulator->programCounter;
-    simulator->pcAddImm->input2 = &simulator->processor->immediateModule->output;
-
-    simulator->pcAdd4->input1 = &simulator->programCounter;
-    simulator->pcAdd4->input2 = &simulator->pcIncrement;
-
+    // Multiplexer for selecting input for destination register
     simulator->processor->regWriteMux->input1 = &simulator->memoryMux->output;
     simulator->processor->regWriteMux->input2 = &simulator->pcAdd4->output;
 
+    // Memory write signals
     simulator->memory->writeData = &simulator->processor->registerModule->output2;
-    simulator->memory->writeSignal = &simulator->processor->control->memWrite;
-    simulator->memory->dataType = &simulator->processor->decoder->func3;
+    simulator->memory->dataType = &simulator->processor->decoder->funct3;
 }
 
 void tearDown(Simulator *simulator) {
@@ -87,7 +95,7 @@ void loadProgram(Simulator *simulator, char *path) {
     fseek(fp, 0L, SEEK_END);
     int size = ftell(fp);
     rewind(fp);
-    if (fp == NULL) { exit(2); } // TODO: Make a useful debug statement including file path
+    if (fp == NULL) { exit(2); }
     for (int i = 0; i < size; ++i) {
         c = (char) fgetc(fp);
         if (c < 0) simulator->memory->startAddress[i] = (unsigned char) 256 + c;
@@ -132,8 +140,10 @@ void runCycle(Simulator *simulator) {
         postInstruction(simulator->instruction);
     }
     if (simulator->instruction == 0) {
-        simulator->simulatorStatus = zeroInstruction;
+        simulator->simulatorStatus = zeroInstruction; // Halt execution - invalid instruction
+        return;
     }
+
     // Decode instruction
     decodeInstruction(simulator->processor->decoder);
     generateImmediate(simulator->processor->immediateModule);
@@ -168,5 +178,16 @@ void runCycle(Simulator *simulator) {
     executeAdder(simulator->pcAdd4);
     selectOutput(simulator->jalrMux);
     simulator->programCounter = simulator->jalrMux->output;
-    if (*simulator->ecallSignal) simulator->simulatorStatus = ecallExit;
+    if (*simulator->ecallSignal) handleEcall(simulator);
+}
+
+void handleEcall(Simulator *simulator) {
+    // TODO: Implement more ecalls - currently only supports terminating the program execution
+    switch (simulator->processor->registerModule->registers[17].data) {
+        case 10:
+            simulator->simulatorStatus = ecallExit;
+            break;
+        default:
+            simulator->simulatorStatus = ecallExit;
+    }
 }

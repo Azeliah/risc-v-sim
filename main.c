@@ -3,6 +3,21 @@
 #include "test/test.h"
 
 int main(int argc, char **argv) {
+    /*
+     * Steps of execution:
+     *
+     * 1. Set up the simulator
+     *
+     * 2a. Run test suite
+     *
+     * 2b. Load the program to be executed into the memory
+     *
+     * 3a. Print test suite
+     *
+     * 3b. Execute program(s) and print register contents after program(s)
+     *
+     * 4. Tear down simulator
+     */
     Simulator *simulator = malloc(sizeof(Simulator));
     initialize(simulator, 0x800000);
 
@@ -17,24 +32,17 @@ int main(int argc, char **argv) {
         }
         free(resultArray);
     } else {
-        /*
-         * Steps of execution:
-         *
-         * 1. Set up the simulator
-         *
-         * 2. Load the program to be executed into the memory
-         *
-         * 3. Execute program(s) and print register contents after program(s)
-         *
-         * 4. Tear down memory allocations
-         */
         char *fp;
-        if (argc > 2) fp = argv[1];
-        else fp = "../test/task4/t14.bin";
+        if (argc >= 2) fp = argv[1];
+        else {
+            fp = "../demo.o";
+            simulator->programCounter = 0x34;
+        }
 
         loadProgram(simulator, fp);
         run(simulator);
-        printRegisters(simulator->processor->registerModule->registers);
+        printRegistersAssessment(simulator->processor->registerModule->registers);
+        outputRegisterToFile(simulator->processor->registerModule->registers, fp);
     }
 
     tearDown(simulator);
