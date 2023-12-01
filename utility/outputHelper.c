@@ -16,7 +16,10 @@ void printRegistersConvention(Register *registers) {
 void printRegistersAssessment(Register *registers) {
     for (int i = 0; i < 32; ++i) {
         printf("x%d = 0x%08x", i, toLittleEndian(registers[i].data));
-        if (i == 31) break;
+        if (i == 31) {
+            printf("\n");
+            break;
+        }
         else printf(",\t");
         if ((i + 1) % 4 == 0) printf("\n");
     }
